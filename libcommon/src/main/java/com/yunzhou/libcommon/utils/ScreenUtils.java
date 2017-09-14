@@ -41,6 +41,9 @@ public class ScreenUtils {
      * 获取状态栏高度
      */
     public static int getStatusBarHeight(Context context){
+        if(context == null){
+            return 0;
+        }
         int statusBarHeight = 0;
         int resourceId = context.getResources().getIdentifier("status_bar_height", "dimen", "android");
         if (resourceId > 0) {
@@ -55,7 +58,8 @@ public class ScreenUtils {
      * 获取除去状态栏高度的屏幕高度
      */
     public static int getScreenHeightWithoutStatusbar(Context context){
-        return getScreenHeight() - getStatusBarHeight(context);
+        return context != null ?
+                (getScreenHeight() - getStatusBarHeight(context)) : 0;
     }
 
 }
