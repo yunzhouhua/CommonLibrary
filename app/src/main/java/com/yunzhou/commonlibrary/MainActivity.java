@@ -4,6 +4,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.yunzhou.libcommon.storage.ACache;
 import com.yunzhou.libcommon.storage.SharedPreferenceUtils;
 import com.yunzhou.libcommon.utils.PackageInfoUtils;
 import com.yunzhou.libcommon.utils.PixelUtils;
@@ -38,5 +39,10 @@ public class MainActivity extends AppCompatActivity {
         Log.e("aa", "删除SharedPreference");
         Log.e("aa", "SharedPreference : " + SharedPreferenceUtils.get(this, "demaxiya", "123"));
         Log.e("aa", "SharedPreference_global : " + SharedPreferenceUtils.get(this, "demaxiya", "123", true));
+
+        Log.e("aa", "=======================ACache=========================");
+        ACache cache = ACache.get(this);
+        cache.put("acache", "acache");
+        Log.e("aa", "结果 ： " + cache.getAsString("acache"));
     }
 }
