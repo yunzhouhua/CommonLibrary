@@ -47,17 +47,13 @@ public class PackageInfoUtils {
 
     /**
      * 根据key，获取AndroidManifest.xml中meta-data的值
-     * @param context
-     * @param key
-     * @return
      */
     public static String getMetaDataValue(Context context, String key){
         if(context == null){
             return null;
         }
         try {
-            ApplicationInfo applicationInfo = null;
-            applicationInfo = context.getPackageManager()
+            ApplicationInfo applicationInfo = context.getPackageManager()
                     .getApplicationInfo(context.getPackageName(), PackageManager.GET_META_DATA);
             return applicationInfo.metaData.getString(key);
         } catch (PackageManager.NameNotFoundException e) {
