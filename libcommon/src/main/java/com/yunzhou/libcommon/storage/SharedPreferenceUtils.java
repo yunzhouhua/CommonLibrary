@@ -71,7 +71,7 @@ public class SharedPreferenceUtils {
      * @param value     值
      */
     @SuppressWarnings("unused")
-    public void save(Context context, String key, Object value){
+    public static void save(Context context, String key, Object value){
         save(context, key, value, false);
     }
 
@@ -83,7 +83,7 @@ public class SharedPreferenceUtils {
      * @param isGlobal    该数据是否是全局存储
      */
     @SuppressWarnings(value = {"WeakerAccess", "unchecked"})
-    public void save(Context context, String key, Object value, boolean isGlobal){
+    public static void save(Context context, String key, Object value, boolean isGlobal){
         if(context == null){
             return ;
         }
@@ -165,7 +165,7 @@ public class SharedPreferenceUtils {
      * @param context       context
      * @param key           键
      */
-    public void remove(Context context, String key){
+    public static void remove(Context context, String key){
         remove(context, key, false);
     }
 
@@ -175,7 +175,7 @@ public class SharedPreferenceUtils {
      * @param key           键
      * @param isGlobal      是否全局
      */
-    private void remove(Context context, String key, boolean isGlobal) {
+    public static void remove(Context context, String key, boolean isGlobal) {
         if(context == null){
             return;
         }
