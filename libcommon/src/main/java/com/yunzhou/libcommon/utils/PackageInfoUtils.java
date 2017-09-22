@@ -3,6 +3,7 @@ package com.yunzhou.libcommon.utils;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.util.Log;
 
 /**
  * 获取安装包相关的信息，比如版本号，版本名称，meta-data信息等
@@ -11,11 +12,14 @@ import android.content.pm.PackageManager;
 
 public class PackageInfoUtils {
 
+    private static final String TAG = "PackageInfoUtils";
+
     /**
      * 获取当前App VersionCode
      */
     public static int getVersionCode(Context context){
         if(context == null){
+            Log.e(TAG, "Context can't be null");
             return 0;
         }
         try {
@@ -33,6 +37,7 @@ public class PackageInfoUtils {
      */
     public static String getVersionName(Context context){
         if(context == null){
+            Log.e(TAG, "Context can't be null");
             return null;
         }
         try {
@@ -50,6 +55,7 @@ public class PackageInfoUtils {
      */
     public static String getMetaDataValue(Context context, String key){
         if(context == null){
+            Log.e(TAG, "Context can't be null");
             return null;
         }
         try {

@@ -3,6 +3,7 @@ package com.yunzhou.libcommon.utils;
 import android.content.Context;
 import android.content.res.Resources;
 import android.util.DisplayMetrics;
+import android.util.Log;
 
 /**
  * 屏幕尺寸相关，获取屏幕宽度，高度等等
@@ -11,6 +12,8 @@ import android.util.DisplayMetrics;
 
 @SuppressWarnings("unused")
 public class ScreenUtils {
+
+    private static final String TAG = "ScreenUtils";
 
     /**
      * 获取屏幕的宽和高
@@ -42,6 +45,7 @@ public class ScreenUtils {
      */
     public static int getStatusBarHeight(Context context){
         if(context == null){
+            Log.e(TAG, "Context can't be null");
             return 0;
         }
         int statusBarHeight = 0;

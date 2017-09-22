@@ -3,6 +3,7 @@ package com.yunzhou.libcommon.storage;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.text.TextUtils;
+import android.util.Log;
 
 import java.lang.ref.WeakReference;
 import java.util.Set;
@@ -14,6 +15,8 @@ import java.util.Set;
 
 @SuppressWarnings("unused")
 public class SharedPreferenceUtils {
+
+    private static final String TAG = "SharedPreferenceUtils";
 
     /**
      * 正常的SharedPreference名称
@@ -85,6 +88,7 @@ public class SharedPreferenceUtils {
     @SuppressWarnings(value = {"WeakerAccess", "unchecked"})
     public static void save(Context context, String key, Object value, boolean isGlobal){
         if(context == null){
+            Log.e(TAG, "Context can't be null");
             return ;
         }
         if(TextUtils.isEmpty(key)){
@@ -134,6 +138,7 @@ public class SharedPreferenceUtils {
     @SuppressWarnings(value = {"WeakerAccess", "unchecked"})
     public static <T> T get(Context context, String key, T defaultValue, boolean isGlobal){
         if(context == null){
+            Log.e(TAG, "Context can't be null");
             return null;
         }
         if(TextUtils.isEmpty(key)){
@@ -177,6 +182,7 @@ public class SharedPreferenceUtils {
      */
     public static void remove(Context context, String key, boolean isGlobal) {
         if(context == null){
+            Log.e(TAG, "Context can't be null");
             return;
         }
         if(TextUtils.isEmpty(key)){

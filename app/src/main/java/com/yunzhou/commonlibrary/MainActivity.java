@@ -6,9 +6,13 @@ import android.util.Log;
 
 import com.yunzhou.libcommon.storage.ACache;
 import com.yunzhou.libcommon.storage.SharedPreferenceUtils;
+import com.yunzhou.libcommon.utils.DateFormatUtils;
 import com.yunzhou.libcommon.utils.PackageInfoUtils;
 import com.yunzhou.libcommon.utils.PixelUtils;
 import com.yunzhou.libcommon.utils.ScreenUtils;
+
+import java.util.Date;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -44,5 +48,17 @@ public class MainActivity extends AppCompatActivity {
         ACache cache = ACache.get(this);
         cache.put("acache", "acache");
         Log.e("aa", "结果 ： " + cache.getAsString("acache"));
+
+        Log.e("aa", "=======================时间格式化=========================");
+        Log.e("aa", Thread.currentThread().getId() + " | " + DateFormatUtils.format(new Date(), DateFormatUtils.FORMAT_YMD_HMS_1));
+        Log.e("aa", Thread.currentThread().getId() + " | " + DateFormatUtils.format(new Date(), DateFormatUtils.FORMAT_YMD_HMS_2));
+        new Thread(){
+            @Override
+            public void run() {
+                super.run();
+                Log.e("aa", Thread.currentThread().getId() + " | " + DateFormatUtils.format(new Date(), DateFormatUtils.FORMAT_YMD_HMS_1));
+                Log.e("aa", Thread.currentThread().getId() + " | " + DateFormatUtils.format(new Date(), DateFormatUtils.FORMAT_YMD_HMS_2));
+            }
+        }.start();
     }
 }
