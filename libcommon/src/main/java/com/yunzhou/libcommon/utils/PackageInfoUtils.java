@@ -2,6 +2,7 @@ package com.yunzhou.libcommon.utils;
 
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.util.Log;
 
@@ -67,6 +68,27 @@ public class PackageInfoUtils {
             return null;
         }
 
+    }
+
+    /**
+     * 获取应用名称
+     * @param context   context
+     * @return  应用名称
+     */
+    public static String getAppName(Context context) {
+        if(context == null){
+            Log.e(TAG, "Context can't be null");
+            return null;
+        }
+        PackageManager packageManager = context.getPackageManager();
+        try {
+            PackageInfo packageInfo = packageManager.getPackageInfo(context.getPackageName(), 0);
+            int labelRes = packageInfo.applicationInfo.labelRes;
+            return context.getResources().getString(labelRes);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
 

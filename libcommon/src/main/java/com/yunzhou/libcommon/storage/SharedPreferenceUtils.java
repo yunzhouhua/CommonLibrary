@@ -207,7 +207,7 @@ public class SharedPreferenceUtils {
      * @param context       context
      * @param isGlobal      是否全局
      */
-    private static void clean(Context context, boolean isGlobal) {
+    public static void clean(Context context, boolean isGlobal) {
         if(context == null){
             return ;
         }
