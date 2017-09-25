@@ -9,6 +9,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.yunzhou.commonlibrary.bean.Son;
+import com.yunzhou.libcommon.net.NetStatusUtils;
 import com.yunzhou.libcommon.storage.ACache;
 import com.yunzhou.libcommon.storage.SharedPreferenceUtils;
 import com.yunzhou.libcommon.utils.DateFormatUtils;
@@ -87,5 +88,8 @@ public class MainActivity extends AppCompatActivity {
         String jsonSonList = "[{\"birthday\":1506140869111,\"name\":\"zhagnsan\"},{\"birthday\":1506140869112,\"name\":\"lisi\"},{\"birthday\":1506140869112,\"name\":\"wangwu\"}]";
         List<Son> sonList = JSON.parseObject(jsonSonList, List.class);
         sonList.size();
+
+        Log.e("aa", "=======================net connect status=========================");
+        Log.e("aa", NetStatusUtils.getConnectionType(this));
     }
 }
