@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <com.yunzhou.libcommon.views.RoundImageView
+            android:layout_width="200px"
+            android:layout_height="200px"
+            android:src="@mipmap/flower"
+            app:type="circle"
+            app:borderColor="@color/colorAccent"
+            app:borderWidth="10px"/>
+
+        <com.yunzhou.libcommon.views.RoundImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@mipmap/banma"
+            android:scaleType="fitCenter"
+            app:type="round"
+            app:borderRadius="900px"
+            app:borderWidth="100px"
+            app:borderColor="@android:color/holo_green_light"/>
+
+    </LinearLayout>
+</ScrollView>

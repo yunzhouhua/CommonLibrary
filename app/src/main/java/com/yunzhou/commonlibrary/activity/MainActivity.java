@@ -1,13 +1,16 @@
-package com.yunzhou.commonlibrary;
+package com.yunzhou.commonlibrary.activity;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.yunzhou.commonlibrary.R;
 import com.yunzhou.commonlibrary.bean.Son;
 import com.yunzhou.libcommon.net.NetStatusUtils;
 import com.yunzhou.libcommon.storage.ACache;
@@ -22,12 +25,15 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        findViewById(R.id.round_img).setOnClickListener(this);
+
         Log.e("aa", "" + ScreenUtils.getStatusBarHeight(this));
 
         Log.e("aa", "=======================单位变换=========================");
@@ -91,5 +97,16 @@ public class MainActivity extends AppCompatActivity {
 
         Log.e("aa", "=======================net connect status=========================");
         Log.e("aa", NetStatusUtils.getConnectionType(this));
+    }
+
+    @Override
+    public void onClick(View v) {
+        Intent intent = null;
+        switch (v.getId()){
+            case R.id.round_img:
+                intent = new Intent(this, RoundImgActivity.class);
+                startActivity(intent);
+                break;
+        }
     }
 }
