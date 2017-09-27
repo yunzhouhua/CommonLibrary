@@ -1,14 +1,16 @@
 package com.yunzhou.commonlibrary.activity;
 
+import android.content.Context;
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.ArrayMap;
 import android.util.Log;
 import android.view.View;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.yunzhou.commonlibrary.R;
 import com.yunzhou.commonlibrary.bean.Son;
@@ -23,7 +25,6 @@ import com.yunzhou.libcommon.utils.ScreenUtils;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
 
@@ -33,6 +34,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
 
         findViewById(R.id.round_img).setOnClickListener(this);
+        findViewById(R.id.http).setOnClickListener(this);
 
         Log.e("aa", "" + ScreenUtils.getStatusBarHeight(this));
 
@@ -97,12 +99,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         Log.e("aa", "=======================net connect status=========================");
         Log.e("aa", NetStatusUtils.getConnectionType(this));
+
+        Log.e("aa", "=======================ArrayMap=========================");
+        ArrayMap<Integer, String> map = new ArrayMap<>();
+        map.put(1, "Macgrady");
+        map.put(3, "Wade");
+        map.put(23, "Jordan");
+        map.put(24, "Kobe");
+        Log.e("aa", "ArrayMap Size : " + map.size());
+        for(int i = 0; i < map.size(); i++){
+            Log.e("aa", map.keyAt(i) + " : " + map.valueAt(i));
+        }
+
+
     }
 
     @Override
     public void onClick(View v) {
         Intent intent = null;
         switch (v.getId()){
+            case R.id.http:
+                break;
             case R.id.round_img:
                 intent = new Intent(this, RoundImgActivity.class);
                 startActivity(intent);
