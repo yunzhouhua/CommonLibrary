@@ -1,65 +1,94 @@
 package com.yunzhou.commonlibrary.activity;
 
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
 import com.yunzhou.commonlibrary.R;
+import com.yunzhou.commonlibrary.bean.ResponseTemplate;
+import com.yunzhou.libcommon.net.http.Http;
+import com.yunzhou.libcommon.net.http.HttpError;
+import com.yunzhou.libcommon.net.http.callback.JsonCallBack;
+import com.yunzhou.libcommon.net.http.callback.StringCallBack;
 
 public class HttpTestActivity extends AppCompatActivity implements View.OnClickListener{
+
+    private static final String TAG = "HttpTestActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_http_test);
-        findViewById(R.id.get_sync).setOnClickListener(this);
-        findViewById(R.id.get_async).setOnClickListener(this);
-        findViewById(R.id.post_sync).setOnClickListener(this);
-        findViewById(R.id.post_async).setOnClickListener(this);
+        findViewById(R.id.get).setOnClickListener(this);
+        findViewById(R.id.post).setOnClickListener(this);
+        findViewById(R.id.upload).setOnClickListener(this);
+        findViewById(R.id.download).setOnClickListener(this);
+
+        Http.init(this);
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.get_sync:
-                getSync();
+            case R.id.get:
+                get();
                 break;
-            case R.id.get_async:
-                getAsync();
+            case R.id.post:
+                post();
                 break;
-            case R.id.post_sync:
-                postSync();
+            case R.id.upload:
+                upload();
                 break;
-            case R.id.post_async:
-                postAsync();
+            case R.id.download:
+                download();
                 break;
         }
     }
 
-    /**
-     * get 同步
-     */
-    public void getSync() {
+    public void get() {
+        Http.get()
+                .url("https://accountv3-api.fclassroom.cn/checkVersion.json")
+                .addHeader("Charset", "UTF-8")
+                .addHeader("Accept-Encoding", "gzip,deflate")
+                .addHeader("Accept-Language", "zh-cn")
+                .addParams("jike-client-from", "APP")
+                .addParams("versionType", "21")
+                .addParams("category", "20")
+                .addParams("versionNo", "355")
+                .execute(new JsonCallBack<ResponseTemplate<Object>>() {
+                    @Override
+                    protected void onFailed(@NonNull HttpError error) {
+                        Log.e(TAG, "Failed : " + error.getCode() + " : " + error.getMessage());
+                    }
+
+                    @Override
+                    protected void onSuccess(ResponseTemplate<Object> result) {
+                        Log.e(TAG, "result : " + result );
+                    }
+                });
+//                .execute(new StringCallBack() {
+//                    @Override
+//                    protected void onFailed(@NonNull HttpError error) {
+//                        Log.e(TAG, "Failed : " + error.getCode() + " : " + error.getMessage());
+//                    }
+//
+//                    @Override
+//                    protected void onSuccess(String result) {
+//                        Log.e(TAG, "result : " + result );
+//                    }
+//                });
+    }
+
+    public void post() {
+    }
+
+    private void upload() {
 
     }
 
-    /**
-     * get异步
-     */
-    public void getAsync() {
-    }
-
-    /**
-     * post 同步
-     */
-    private void postSync() {
-
-    }
-
-    /**
-     * post 异步
-     */
-    private void postAsync() {
+    private void download() {
 
     }
 }

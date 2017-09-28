@@ -6,6 +6,8 @@ import android.support.annotation.NonNull;
 
 import com.yunzhou.libcommon.net.http.config.HttpConfig;
 import com.yunzhou.libcommon.net.http.excutor.Executor;
+import com.yunzhou.libcommon.net.http.excutor.OKHttpExecutor;
+import com.yunzhou.libcommon.net.http.request.GetRequest;
 import com.yunzhou.libcommon.net.http.request.Request;
 
 /**
@@ -37,7 +39,7 @@ public class Http {
      * @param context
      */
     public static void init(@NonNull Context context){
-        init(context, null);
+        init(context, new OKHttpExecutor());
     }
 
     public static void init(@NonNull Context context, @NonNull Executor executor){
@@ -57,8 +59,7 @@ public class Http {
      * @return
      */
     public static Request get(){
-//        return new Request(){} ;
-        return null;
+        return new GetRequest(){} ;
     }
 
     /**
@@ -86,7 +87,13 @@ public class Http {
         return getInstance().mHttpConfig;
     }
 
-
+    /**
+     * 对外暴露获取Resource的方法
+     * @return
+     */
+    public static Resources getResource(){
+        return getInstance().mResource;
+    }
 
     /**
      * 根据tag来取消网路请求

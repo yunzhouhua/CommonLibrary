@@ -119,6 +119,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Intent intent = null;
         switch (v.getId()){
             case R.id.http:
+                intent = new Intent(this, HttpTestActivity.class);
+                startActivity(intent);
                 break;
             case R.id.round_img:
                 intent = new Intent(this, RoundImgActivity.class);
