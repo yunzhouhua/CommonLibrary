@@ -2,6 +2,7 @@ package com.yunzhou.libcommon.net.http.excutor;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.text.TextUtils;
 import android.util.ArrayMap;
 
 import com.yunzhou.libcommon.net.http.Http;
@@ -19,7 +20,10 @@ import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
+import okhttp3.FormBody;
 import okhttp3.Headers;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.RequestBody;
 
@@ -66,10 +70,46 @@ public class OKHttpExecutor extends Executor {
                 .headers(headers);
         if(request.getMethod() == Method.POST){
             //POST请求，添加body参数
-            RequestBody requestBody = null;
+            RequestBody requestBody = makeBody(request);
             requestBuilder.post(requestBody);
         }
         executeOkHttp(request, requestBuilder.build(), callback);
+    }
+
+    /**
+     * 生成Post请求的RequestBody
+     * @param request
+     * @return
+     */
+    private RequestBody makeBody(Request request) {
+        ArrayMap<String, String> params = request.getParams();
+        if(request.getFile() != null){
+            MediaType mediaType = MediaType.parse(com.yunzhou.libcommon.net.http.MediaType.STREAM);
+            if(TextUtils.isEmpty(request.getKeyFile())){
+                //单文件上传
+                return RequestBody.create(mediaType, request.getFile());
+            }else{
+                //复合数据上传MultiBody
+                MultipartBody.Builder builder = new MultipartBody.Builder();
+                builder.addPart(RequestBody.create(mediaType, request.getFile()));
+                if(params != null && params.size() > 0){
+                    for(int i = 0; i < params.size(); i++){
+                        builder.addFormDataPart(params.keyAt(i), params.valueAt(i));
+                    }
+                }
+                return builder.build();
+            }
+        }else{
+            if(params == null && params.size() <= 0){
+                return null;
+            }
+            //只存在键值对
+            FormBody.Builder builder = new FormBody.Builder();
+            for(int i = 0; i < params.size(); i++){
+                builder.add(params.keyAt(i), params.valueAt(i));
+            }
+            return builder.build();
+        }
     }
 
     private <T> void executeOkHttp(@NonNull final Request request,
@@ -102,7 +142,9 @@ public class OKHttpExecutor extends Executor {
                     error.setCode(HttpError.ERROR_IO);
                     error.setMessage("IOException");
                     error.setException(e);
-                    callback.runOnUIThreadFailed(error);
+                    if(callback != null) {
+                        callback.runOnUIThreadFailed(error);
+                    }
                 }
             }
 
@@ -117,18 +159,24 @@ public class OKHttpExecutor extends Executor {
                 response.setHeaders(parseHeaders(okHttpResponse.headers()));
                 if(!isCanceled(request, response, callback) && isSuccessful(request, response, callback)){
                     try {
-                        T t = callback.parseResponse(request, response);
-                        callback.runOnUIThreadSuccess(response, t);
+                        if(callback != null) {
+                            T t = callback.parseResponse(request, response);
+                            callback.runOnUIThreadSuccess(response, t);
+                        }
                     } catch (HttpErrorException e) {
                         HttpError error = e.getHttpError();
-                        callback.runOnUIThreadFailed(error);
+                        if(callback != null) {
+                            callback.runOnUIThreadFailed(error);
+                        }
                     }catch (Exception e){
                         HttpError error = new HttpError();
                         error.setId(request.getId());
                         error.setCode(HttpError.ERROR_TYPE);
                         error.setMessage(e.getMessage());
                         error.setException(e);
-                        callback.runOnUIThreadFailed(error);
+                        if(callback != null) {
+                            callback.runOnUIThreadFailed(error);
+                        }
                     }
                 }
             }
@@ -168,7 +216,9 @@ public class OKHttpExecutor extends Executor {
         error.setCode(response.getCode());
         error.setMessage("request failed , reponse's code is :" + response.getCode());
         error.setException(new IllegalStateException());
-        callback.runOnUIThreadFailed(error);
+        if(callback != null) {
+            callback.runOnUIThreadFailed(error);
+        }
     }
 
     /**
@@ -198,7 +248,9 @@ public class OKHttpExecutor extends Executor {
         error.setCode(HttpError.ERROR_CANCELED);
         error.setMessage("call is canceled");
         error.setException(new CanceledException());
-        callback.runOnUIThreadFailed(error);
+        if(callback != null) {
+            callback.runOnUIThreadFailed(error);
+        }
     }
 
     /**
@@ -219,11 +271,38 @@ public class OKHttpExecutor extends Executor {
 
     @Override
     public void clearCookie(Context context) {
-
+        mCookieManager.clearCookie();
     }
 
     @Override
-    public void cancle(@NonNull Object tag) {
+    public void cancel(@NonNull Object tag) {
+        try{
+            for(Call call : mOkHttpClient.dispatcher().queuedCalls()){
+                if(tag.equals(call.request().tag())){
+                    call.cancel();
+                }
+            }
+            for(Call call : mOkHttpClient.dispatcher().runningCalls()){
+                if(tag.equals(call.request().tag())){
+                    call.cancel();
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
 
+    @Override
+    public void cancelAll() {
+        try{
+            for(Call call : mOkHttpClient.dispatcher().queuedCalls()){
+                call.cancel();
+            }
+            for(Call call : mOkHttpClient.dispatcher().runningCalls()){
+                call.cancel();
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 }

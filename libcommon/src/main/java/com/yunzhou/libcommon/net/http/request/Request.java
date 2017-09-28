@@ -9,6 +9,7 @@ import com.yunzhou.libcommon.net.http.callback.Callback;
 import com.yunzhou.libcommon.net.http.config.HttpConfig;
 import com.yunzhou.libcommon.net.http.ssl.SSLParams;
 
+import java.io.File;
 import java.util.Map;
 
 /**
@@ -22,6 +23,9 @@ public abstract class Request<T extends Request> {
     private String finalUrl;
     private ArrayMap<String, String> headers;
     private ArrayMap<String, String> params;
+    //POST文件上传使用
+    private String keyFile;
+    private File paramFile;
     private Method method;
     private SSLParams mSsl;
     private long readTimeout;
@@ -178,7 +182,7 @@ public abstract class Request<T extends Request> {
      * @param value
      * @return
      */
-    public T addParams(String key, String value){
+    public T addParam(String key, String value){
         if(!TextUtils.isEmpty(key) && !TextUtils.isEmpty(value)){
             this.params.put(key, value);
         }
@@ -191,7 +195,7 @@ public abstract class Request<T extends Request> {
      * @param value
      * @return
      */
-    public T addParams(String key, int value){
+    public T addParam(String key, int value){
         if(!TextUtils.isEmpty(key)){
             this.params.put(key, String.valueOf(value));
         }
@@ -204,7 +208,7 @@ public abstract class Request<T extends Request> {
      * @param value
      * @return
      */
-    public T addParams(String key, float value){
+    public T addParam(String key, float value){
         if(!TextUtils.isEmpty(key)){
             this.params.put(key, String.valueOf(value));
         }
@@ -217,7 +221,7 @@ public abstract class Request<T extends Request> {
      * @param value
      * @return
      */
-    public T addParams(String key, long value){
+    public T addParam(String key, long value){
         if(!TextUtils.isEmpty(key)){
             this.params.put(key, String.valueOf(value));
         }
@@ -230,7 +234,7 @@ public abstract class Request<T extends Request> {
      * @param value
      * @return
      */
-    public T addParams(String key, double value){
+    public T addParam(String key, double value){
         if(!TextUtils.isEmpty(key)){
             this.params.put(key, String.valueOf(value));
         }
@@ -243,7 +247,7 @@ public abstract class Request<T extends Request> {
      * @param value
      * @return
      */
-    public T addParams(String key, boolean value){
+    public T addParam(String key, boolean value){
         if(!TextUtils.isEmpty(key)){
             this.params.put(key, String.valueOf(value));
         }
@@ -347,6 +351,24 @@ public abstract class Request<T extends Request> {
         }else{
             return false;
         }
+    }
+
+    public T file(File file){
+        this.paramFile = file;
+        return (T)this;
+    }
+
+    public T file(String key, File file){
+        this.keyFile = key;
+        this.paramFile = file;
+        return (T)this;
+    }
+
+    public File getFile(){
+        return paramFile;
+    }
+    public String getKeyFile(){
+        return keyFile;
     }
 
     /**

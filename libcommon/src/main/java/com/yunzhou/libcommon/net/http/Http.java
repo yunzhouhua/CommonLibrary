@@ -8,6 +8,7 @@ import com.yunzhou.libcommon.net.http.config.HttpConfig;
 import com.yunzhou.libcommon.net.http.excutor.Executor;
 import com.yunzhou.libcommon.net.http.excutor.OKHttpExecutor;
 import com.yunzhou.libcommon.net.http.request.GetRequest;
+import com.yunzhou.libcommon.net.http.request.PostRequest;
 import com.yunzhou.libcommon.net.http.request.Request;
 
 /**
@@ -67,8 +68,7 @@ public class Http {
      * @return
      */
     public static Request post(){
-//        return new Request() {};
-        return null;
+        return new PostRequest();
     }
 
     /**
@@ -101,10 +101,23 @@ public class Http {
      */
     public static void cancel(Object tag){
         if(getInstance().mExecutor != null){
-            getInstance().mExecutor.cancle(tag);
+            getInstance().mExecutor.cancel(tag);
         }
     }
 
+    /**
+     * 取消所有网络请求
+     */
+    public static void cancelAll(){
+        if(getInstance().mExecutor != null){
+            getInstance().mExecutor.cancelAll();
+        }
+    }
+
+    /**
+     * 清空Cookie
+     * @param context
+     */
     public static void clearCookie(Context context){
         if(getInstance().mExecutor != null){
             getInstance().mExecutor.clearCookie(context);

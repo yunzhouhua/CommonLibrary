@@ -53,10 +53,10 @@ public class HttpTestActivity extends AppCompatActivity implements View.OnClickL
                 .addHeader("Charset", "UTF-8")
                 .addHeader("Accept-Encoding", "gzip,deflate")
                 .addHeader("Accept-Language", "zh-cn")
-                .addParams("jike-client-from", "APP")
-                .addParams("versionType", "21")
-                .addParams("category", "20")
-                .addParams("versionNo", "355")
+                .addParam("jike-client-from", "APP")
+                .addParam("versionType", "21")
+                .addParam("category", "20")
+                .addParam("versionNo", "355")
                 .execute(new JsonCallBack<ResponseTemplate<Object>>() {
                     @Override
                     protected void onFailed(@NonNull HttpError error) {
@@ -82,6 +82,26 @@ public class HttpTestActivity extends AppCompatActivity implements View.OnClickL
     }
 
     public void post() {
+        Http.post()
+                .url("https://accountv3-api.fclassroom.cn/checkVersion.json")
+                .addHeader("Charset", "UTF-8")
+                .addHeader("Accept-Encoding", "gzip,deflate")
+                .addHeader("Accept-Language", "zh-cn")
+                .addParam("jike-client-from", "APP")
+                .addParam("versionType", "21")
+                .addParam("category", "20")
+                .addParam("versionNo", "355")
+                .execute(new JsonCallBack<ResponseTemplate<Object>>() {
+                    @Override
+                    protected void onFailed(@NonNull HttpError error) {
+                        Log.e(TAG, "Failed : " + error.getCode() + " : " + error.getMessage());
+                    }
+
+                    @Override
+                    protected void onSuccess(ResponseTemplate<Object> result) {
+                        Log.e(TAG, "result : " + result );
+                    }
+                });
     }
 
     private void upload() {

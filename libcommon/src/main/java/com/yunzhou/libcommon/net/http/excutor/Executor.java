@@ -33,7 +33,12 @@ public abstract class Executor {
      * 取消网络请求
      * @param tag
      */
-    public abstract void cancle(@NonNull Object tag);
+    public abstract void cancel(@NonNull Object tag);
+
+    /**
+     * 取消所有网络请求
+     */
+    public abstract void cancelAll();
 
     protected String formatUrl(Request request){
         String url = request.getUrl();
