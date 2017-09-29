@@ -15,6 +15,7 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.yunzhou.commonlibrary.R;
 import com.yunzhou.commonlibrary.bean.Son;
 import com.yunzhou.libcommon.net.NetStatusUtils;
+import com.yunzhou.libcommon.route.RouteManager;
 import com.yunzhou.libcommon.storage.ACache;
 import com.yunzhou.libcommon.storage.SharedPreferenceUtils;
 import com.yunzhou.libcommon.utils.DateFormatUtils;
@@ -119,12 +120,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Intent intent = null;
         switch (v.getId()){
             case R.id.http:
-                intent = new Intent(this, HttpTestActivity.class);
-                startActivity(intent);
+//                intent = new Intent(this, HttpTestActivity.class);
+//                startActivity(intent);
+                RouteManager.target(this, HttpTestActivity.class)
+                        .addInt("int", 12)
+                        .addFloat("float", 12.6f)
+                        .addLong("long", 123l)
+                        .addDouble("dounle", 345d)
+                        .addBoolean("boolean", true)
+                        .addSerializable("serializable", null)
+                        .addString("string", null)
+                        .goLeftSlide();
                 break;
             case R.id.round_img:
-                intent = new Intent(this, RoundImgActivity.class);
-                startActivity(intent);
+                RouteManager.target(this, RoundImgActivity.class)
+                        .goSilence();
                 break;
         }
     }

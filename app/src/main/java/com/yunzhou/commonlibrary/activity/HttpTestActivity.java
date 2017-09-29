@@ -105,7 +105,6 @@ public class HttpTestActivity extends AppCompatActivity implements View.OnClickL
     }
 
     private void upload() {
-
     }
 
     private void download() {
