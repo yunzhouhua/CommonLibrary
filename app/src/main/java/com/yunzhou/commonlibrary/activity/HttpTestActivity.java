@@ -1,5 +1,6 @@
 package com.yunzhou.commonlibrary.activity;
 
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -12,6 +13,19 @@ import com.yunzhou.libcommon.net.http.Http;
 import com.yunzhou.libcommon.net.http.HttpError;
 import com.yunzhou.libcommon.net.http.callback.JsonCallBack;
 import com.yunzhou.libcommon.net.http.callback.StringCallBack;
+
+import java.io.File;
+import java.io.IOException;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Headers;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class HttpTestActivity extends AppCompatActivity implements View.OnClickListener{
 
@@ -105,9 +119,60 @@ public class HttpTestActivity extends AppCompatActivity implements View.OnClickL
     }
 
     private void upload() {
+        String path= Environment.getExternalStorageDirectory() + File.separator + "jike" + File.separator + "commons-io-2.5.jar";
+        File file = new File(path);
+        Http.post()
+                .url("http://192.168.2.110:8080/webapp/fileUploadPage")
+                .file("file", file)
+                .setConnectTimeout(60000)
+                .setReadTimeout(60000)
+                .setWriteTimeout(60000)
+                .execute(new StringCallBack() {
+            @Override
+            protected void onFailed(@NonNull HttpError error) {
+                int a = 0;
+            }
+
+            @Override
+            protected void onSuccess(String result) {
+                int a = 0;
+            }
+        });
     }
 
     private void download() {
+        String path= Environment.getExternalStorageDirectory() + File.separator + "jike" + File.separator + "commons-io-2.5.jar";
+        File file = new File(path);
 
+        OkHttpClient okHttpClient = new OkHttpClient.Builder().build();
+        RequestBody fileBody = RequestBody.create(MediaType.parse("application/octet-stream"), file);
+        RequestBody requestBody = new MultipartBody.Builder()
+                .setType(MultipartBody.FORM)
+                .addPart(Headers.of(
+                        "Content-Disposition",
+                        "form-data; name=\"username\""),
+                        RequestBody.create(null, "HGR"))
+                .addPart(Headers.of(
+                        "Content-Disposition",
+                        "form-data; name=\"mFile\"; filename=\"" + file.getName() + "\""), fileBody)
+                .build();
+        Request request = new Request.Builder()
+                .url("http://192.168.2.110:8080/webapp/upload3")
+                .post(requestBody)
+                .build();
+        Call call = okHttpClient.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+
+                Log.e(TAG, "failure upload!");
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+
+                Log.i(TAG, "success upload!");
+            }
+        });
     }
 }

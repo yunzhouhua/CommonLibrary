@@ -91,7 +91,9 @@ public class OKHttpExecutor extends Executor {
             }else{
                 //复合数据上传MultiBody
                 MultipartBody.Builder builder = new MultipartBody.Builder();
-                builder.addPart(RequestBody.create(mediaType, request.getFile()));
+//                builder.addPart(RequestBody.create(mediaType, request.getFile()));
+                RequestBody fileBody=RequestBody.create(mediaType,request.getFile());
+                builder.addFormDataPart(request.getKeyFile(), request.getFile().getName(), fileBody);
                 if(params != null && params.size() > 0){
                     for(int i = 0; i < params.size(); i++){
                         builder.addFormDataPart(params.keyAt(i), params.valueAt(i));
