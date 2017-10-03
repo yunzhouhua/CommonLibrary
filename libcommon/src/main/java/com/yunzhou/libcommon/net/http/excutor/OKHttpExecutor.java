@@ -46,6 +46,7 @@ public class OKHttpExecutor extends Executor {
         //设置Cookie
         mCookieManager = new CookieManager(context, config.getCookieType());
         builder.cookieJar(mCookieManager);
+
         //设置Https
         if(config.getSslParams() != null &&
                 config.getSslParams().getmTrustManager() != null &&
@@ -85,14 +86,13 @@ public class OKHttpExecutor extends Executor {
         ArrayMap<String, String> params = request.getParams();
         if(request.getFile() != null){
             MediaType mediaType = MediaType.parse(com.yunzhou.libcommon.net.http.MediaType.STREAM);
+            RequestBody fileBody=RequestBody.create(mediaType,request.getFile());
             if(TextUtils.isEmpty(request.getKeyFile())){
                 //单文件上传
-                return RequestBody.create(mediaType, request.getFile());
+                return fileBody;
             }else{
                 //复合数据上传MultiBody
-                MultipartBody.Builder builder = new MultipartBody.Builder();
-//                builder.addPart(RequestBody.create(mediaType, request.getFile()));
-                RequestBody fileBody=RequestBody.create(mediaType,request.getFile());
+                MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);
                 builder.addFormDataPart(request.getKeyFile(), request.getFile().getName(), fileBody);
                 if(params != null && params.size() > 0){
                     for(int i = 0; i < params.size(); i++){
