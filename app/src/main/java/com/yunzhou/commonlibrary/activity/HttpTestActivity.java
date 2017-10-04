@@ -30,6 +30,7 @@ import okhttp3.Response;
 public class HttpTestActivity extends AppCompatActivity implements View.OnClickListener{
 
     private static final String TAG = "HttpTestActivity";
+    private static final String HOST = "http://192.168.1.106:8080/webapp/";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +40,8 @@ public class HttpTestActivity extends AppCompatActivity implements View.OnClickL
         findViewById(R.id.post).setOnClickListener(this);
         findViewById(R.id.upload).setOnClickListener(this);
         findViewById(R.id.download).setOnClickListener(this);
+        findViewById(R.id.login).setOnClickListener(this);
+        findViewById(R.id.logout).setOnClickListener(this);
 
         Http.init(this);
     }
@@ -57,6 +60,26 @@ public class HttpTestActivity extends AppCompatActivity implements View.OnClickL
                 break;
             case R.id.download:
                 download();
+                break;
+            case R.id.login:
+                Http.get()
+                        .url(HOST + "login")
+                        .execute(new StringCallBack() {
+                            @Override
+                            protected void onFailed(@NonNull HttpError error) {
+                                Log.e(TAG, "onFailed: ");
+                            }
+
+                            @Override
+                            protected void onSuccess(String result) {
+                                Log.e(TAG, "onSuccess: " + result);
+                            }
+                        });
+                break;
+            case R.id.logout:
+                Http.get()
+                        .url(HOST + "logout")
+                        .execute(null);
                 break;
         }
     }
@@ -122,7 +145,7 @@ public class HttpTestActivity extends AppCompatActivity implements View.OnClickL
         String path= Environment.getExternalStorageDirectory() + File.separator + "jike" + File.separator + "commons-io-2.5.jar";
         File file = new File(path);
         Http.post()
-                .url("http://192.168.2.110:8080/webapp/fileUploadPage")
+                .url(HOST + "fileUploadPage")
                 .file("file", file)
                 .setConnectTimeout(60000)
                 .setReadTimeout(60000)

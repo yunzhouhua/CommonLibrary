@@ -2,7 +2,6 @@ package com.yunzhou.libcommon.net.http.excutor;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.text.TextUtils;
 import android.util.ArrayMap;
 
 import com.yunzhou.libcommon.net.http.Http;
@@ -14,8 +13,10 @@ import com.yunzhou.libcommon.net.http.cookie.CookieManager;
 import com.yunzhou.libcommon.net.http.exception.CanceledException;
 import com.yunzhou.libcommon.net.http.exception.HttpErrorException;
 import com.yunzhou.libcommon.net.http.request.Request;
+import com.yunzhou.libcommon.net.http.request.RequestParams;
 import com.yunzhou.libcommon.net.http.response.Response;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
@@ -72,7 +73,9 @@ public class OKHttpExecutor extends Executor {
         if(request.getMethod() == Method.POST){
             //POST请求，添加body参数
             RequestBody requestBody = makeBody(request);
-            requestBuilder.post(requestBody);
+            if(requestBody != null) {
+                requestBuilder.post(requestBody);
+            }
         }
         executeOkHttp(request, requestBuilder.build(), callback);
     }
@@ -83,35 +86,66 @@ public class OKHttpExecutor extends Executor {
      * @return
      */
     private RequestBody makeBody(Request request) {
-        ArrayMap<String, String> params = request.getParams();
-        if(request.getFile() != null){
-            MediaType mediaType = MediaType.parse(com.yunzhou.libcommon.net.http.MediaType.STREAM);
-            RequestBody fileBody=RequestBody.create(mediaType,request.getFile());
-            if(TextUtils.isEmpty(request.getKeyFile())){
-                //单文件上传
-                return fileBody;
-            }else{
-                //复合数据上传MultiBody
-                MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);
-                builder.addFormDataPart(request.getKeyFile(), request.getFile().getName(), fileBody);
-                if(params != null && params.size() > 0){
-                    for(int i = 0; i < params.size(); i++){
-                        builder.addFormDataPart(params.keyAt(i), params.valueAt(i));
-                    }
-                }
-                return builder.build();
+        RequestParams params = request.getRequestParams();
+        if(params == null){
+            return null;
+        }
+        if(params.getSinglePart() != null){
+            //单一数据流传递
+            Object singlePart = params.getSinglePart();
+            MediaType mediaType = null;
+            if(singlePart instanceof String){
+                mediaType = MediaType.parse(com.yunzhou.libcommon.net.http.MediaType.JSON);
+                return RequestBody.create(mediaType, (String)singlePart);
+            }else if(singlePart instanceof byte[]){
+                mediaType = MediaType.parse(com.yunzhou.libcommon.net.http.MediaType.STREAM);
+                return RequestBody.create(mediaType, (byte[])singlePart);
+            }else if(singlePart instanceof File){
+                mediaType = MediaType.parse(com.yunzhou.libcommon.net.http.MediaType.STREAM);
+                return RequestBody.create(mediaType, (File)singlePart);
             }
         }else{
-            if(params == null && params.size() <= 0){
-                return null;
+            if(params.getMultiPart() != null && params.getMultiPart().size() > 0){
+                //复合数据流
+                ArrayMap<String, Object> multiPart = params.getMultiPart();
+                MediaType mediaType = null;
+                MultipartBody.Builder multiBuilder = new MultipartBody.Builder();
+                multiBuilder.setType(MultipartBody.FORM);
+                for(int i = 0; i < multiPart.size(); i++){
+                    if(multiPart.valueAt(i) instanceof String){
+                        multiBuilder.addFormDataPart(multiPart.keyAt(i), (String)(multiPart.valueAt(i)));
+                    }else if(multiPart.valueAt(i) instanceof byte[]){
+                        mediaType = MediaType.parse(com.yunzhou.libcommon.net.http.MediaType.STREAM);
+                        RequestBody bytesBody = RequestBody.create(mediaType, (byte[])(multiPart.valueAt(i)));
+                        multiBuilder.addFormDataPart(multiPart.keyAt(i), multiPart.keyAt(i), bytesBody);
+                    }else if(multiPart.valueAt(i) instanceof File){
+                        mediaType = MediaType.parse(com.yunzhou.libcommon.net.http.MediaType.STREAM);
+                        RequestBody fileBody = RequestBody.create(mediaType, (File)(multiPart.valueAt(i)));
+                        multiBuilder.addFormDataPart(multiPart.keyAt(i), ((File)multiPart.valueAt(i)).getName(), fileBody);
+                    }
+                }
+                if(params.getBasicParams() != null && params.getBasicParams().size() > 0){
+                    //添加基本数据到表单
+                    ArrayMap<String, String> basicParams = params.getBasicParams();
+                    for(int i = 0; i < basicParams.size(); i++){
+                        multiBuilder.addFormDataPart(basicParams.keyAt(i), basicParams.valueAt(i));
+                    }
+                }
+                return multiBuilder.build();
+            }else{
+                //基本数据，或者没有
+                if(params.getBasicParams() != null && params.getBasicParams().size() > 0){
+                    //添加基本数据到表单
+                    ArrayMap<String, String> basicParams = params.getBasicParams();
+                    FormBody.Builder formBuilder = new FormBody.Builder();
+                    for(int i = 0; i < basicParams.size(); i++){
+                        formBuilder.add(basicParams.keyAt(i), basicParams.valueAt(i));
+                    }
+                    return formBuilder.build();
+                }
             }
-            //只存在键值对
-            FormBody.Builder builder = new FormBody.Builder();
-            for(int i = 0; i < params.size(); i++){
-                builder.add(params.keyAt(i), params.valueAt(i));
-            }
-            return builder.build();
         }
+        return null;
     }
 
     private <T> void executeOkHttp(@NonNull final Request request,

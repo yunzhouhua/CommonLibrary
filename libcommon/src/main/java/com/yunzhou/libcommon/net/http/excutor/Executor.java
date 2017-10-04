@@ -6,6 +6,7 @@ import android.text.TextUtils;
 import android.util.ArrayMap;
 
 import com.yunzhou.libcommon.net.http.callback.Callback;
+import com.yunzhou.libcommon.net.http.request.RequestParams;
 import com.yunzhou.libcommon.net.http.request.Request;
 import com.yunzhou.libcommon.utils.StringUtils;
 
@@ -58,12 +59,12 @@ public abstract class Executor {
     }
 
     private String buildParams(Request request) {
-        ArrayMap<String, String> params = request.getParams();
+        RequestParams body = request.getRequestParams();
         switch (request.getMethod()){
             case POST:
                 return StringUtils.EMPTY;
             default:
-                return buildParams(params);
+                return buildParams(body.getBasicParams());
         }
     }
 

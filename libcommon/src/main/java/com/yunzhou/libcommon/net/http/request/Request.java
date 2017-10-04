@@ -22,10 +22,7 @@ public abstract class Request<T extends Request> {
     private String url;
     private String finalUrl;
     private ArrayMap<String, String> headers;
-    private ArrayMap<String, String> params;
-    //POST文件上传使用
-    private String keyFile;
-    private File paramFile;
+    private RequestParams mRequestParams;
     private Method method;
     private SSLParams mSsl;
     private long readTimeout;
@@ -38,7 +35,6 @@ public abstract class Request<T extends Request> {
     public Request(Method method){
         this.method = method;
         headers = new ArrayMap<>();
-        params = new ArrayMap<>();
         mSsl = null;
         readTimeout = 0;
         writeTimeout = 0;
@@ -184,7 +180,7 @@ public abstract class Request<T extends Request> {
      */
     public T addParam(String key, String value){
         if(!TextUtils.isEmpty(key) && !TextUtils.isEmpty(value)){
-            this.params.put(key, value);
+            getRequestParams().addParam(key, value);
         }
         return (T)this;
     }
@@ -197,7 +193,7 @@ public abstract class Request<T extends Request> {
      */
     public T addParam(String key, int value){
         if(!TextUtils.isEmpty(key)){
-            this.params.put(key, String.valueOf(value));
+            getRequestParams().addParam(key, String.valueOf(value));
         }
         return (T)this;
     }
@@ -210,7 +206,7 @@ public abstract class Request<T extends Request> {
      */
     public T addParam(String key, float value){
         if(!TextUtils.isEmpty(key)){
-            this.params.put(key, String.valueOf(value));
+            getRequestParams().addParam(key, String.valueOf(value));
         }
         return (T)this;
     }
@@ -223,7 +219,7 @@ public abstract class Request<T extends Request> {
      */
     public T addParam(String key, long value){
         if(!TextUtils.isEmpty(key)){
-            this.params.put(key, String.valueOf(value));
+            getRequestParams().addParam(key, String.valueOf(value));
         }
         return (T)this;
     }
@@ -236,7 +232,7 @@ public abstract class Request<T extends Request> {
      */
     public T addParam(String key, double value){
         if(!TextUtils.isEmpty(key)){
-            this.params.put(key, String.valueOf(value));
+            getRequestParams().addParam(key, String.valueOf(value));
         }
         return (T)this;
     }
@@ -249,7 +245,7 @@ public abstract class Request<T extends Request> {
      */
     public T addParam(String key, boolean value){
         if(!TextUtils.isEmpty(key)){
-            this.params.put(key, String.valueOf(value));
+            getRequestParams().addParam(key, String.valueOf(value));
         }
         return (T)this;
     }
@@ -262,7 +258,7 @@ public abstract class Request<T extends Request> {
     public T params(Map<String, String> params){
         if(params != null && params.size() > 0){
             for(Map.Entry<String, String> entry : params.entrySet()){
-                this.params.put(entry.getKey(), entry.getValue());
+                getRequestParams().addParam(entry.getKey(), entry.getValue());
             }
         }
         //清空map
@@ -279,16 +275,12 @@ public abstract class Request<T extends Request> {
     public T params(ArrayMap<String, String> params){
         if(params != null && params.size() > 0){
             for(int i = 0; i < params.size(); i++){
-                this.params.put(params.keyAt(i), params.valueAt(i));
+                getRequestParams().addParam(params.keyAt(i), params.valueAt(i));
             }
         }
         params.clear();
         params = null;
         return (T)this;
-    }
-
-    public ArrayMap<String, String> getParams(){
-        return this.params;
     }
 
     /**
@@ -353,22 +345,64 @@ public abstract class Request<T extends Request> {
         }
     }
 
-    public T file(File file){
-        this.paramFile = file;
+    public T file(File stream){
+        if(stream != null && stream.isFile() && stream.exists()) {
+            getRequestParams().addStream(stream);
+        }
         return (T)this;
     }
 
-    public T file(String key, File file){
-        this.keyFile = key;
-        this.paramFile = file;
+    public T bytes(byte[] stream) {
+        if (stream.length > 0){
+            getRequestParams().addStream(stream);
+        }
         return (T)this;
     }
 
-    public File getFile(){
-        return paramFile;
+    /**
+     * 要求使用json格式的字符串
+     * @param stream
+     * @return
+     */
+    public T json(String stream){
+        if(!TextUtils.isEmpty(stream)){
+            getRequestParams().addStream(stream);
+        }
+        return (T)this;
     }
-    public String getKeyFile(){
-        return keyFile;
+
+    public T file(String key, File stream){
+        if(!TextUtils.isEmpty(key) && stream != null && stream.isFile() && stream.exists()) {
+            getRequestParams().addStream(key, stream);
+        }
+        return (T)this;
+    }
+
+    public T bytes(String key, byte[] stream){
+        if (!TextUtils.isEmpty(key) && stream.length > 0){
+            getRequestParams().addStream(key, stream);
+        }
+        return (T)this;
+    }
+
+    /**
+     * 要求使用json格式的字符串
+     * @param key
+     * @param stream
+     * @return
+     */
+    public T json(String key, String stream){
+        if(!TextUtils.isEmpty(key) && !TextUtils.isEmpty(stream)){
+            getRequestParams().addStream(key, stream);
+        }
+        return (T)this;
+    }
+
+    public RequestParams getRequestParams() {
+        if(this.mRequestParams == null){
+            this.mRequestParams = new RequestParams();
+        }
+        return mRequestParams;
     }
 
     /**
