@@ -8,8 +8,6 @@ public class ResponseTemplate<T> {
     private long error_code;
     private String error_msg;
     private T data;
-    private int lalal;
-    private boolean xixixi;
 
     public long getError_code() {
         return error_code;
@@ -35,19 +33,12 @@ public class ResponseTemplate<T> {
         this.data = data;
     }
 
-    public int getLalal() {
-        return lalal;
-    }
-
-    public void setLalal(int lalal) {
-        this.lalal = lalal;
-    }
-
-    public boolean isXixixi() {
-        return xixixi;
-    }
-
-    public void setXixixi(boolean xixixi) {
-        this.xixixi = xixixi;
+    @Override
+    public String toString() {
+        return "ResponseTemplate{" +
+                "error_code=" + error_code +
+                ", error_msg='" + error_msg + '\'' +
+                ", data=" + data +
+                '}';
     }
 }

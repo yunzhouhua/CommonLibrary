@@ -27,6 +27,9 @@ import okhttp3.Response;
  */
 
 public abstract class Callback<T>{
+
+    private static final String TAG = "Callback";
+
     private Context mContext;
     public Callback(){
         this(null);
@@ -62,7 +65,7 @@ public abstract class Callback<T>{
         // Step 1. 检测是否需要终端操作
         boolean interruption = checkInterruptionFailed(error);
         if (interruption) {
-            Log.d("Http", "sendFailResult: interruption");
+            Log.d(TAG, "sendFailResult: interruption");
             return;
         }
 
@@ -87,7 +90,7 @@ public abstract class Callback<T>{
     public final void runOnUIThreadSuccess(final long id, @NonNull final T result){
         boolean interruption = checkInterruptionSuccessed(id);
         if(interruption){
-            Log.d("Http", "sendFailResult: interruption");
+            Log.d(TAG, "sendFailResult: interruption");
             return ;
         }
         final Handler handler = new Handler(Looper.getMainLooper());
@@ -109,13 +112,13 @@ public abstract class Callback<T>{
         if (mContext != null && mContext instanceof Activity) {
             Activity activity = (Activity) mContext;
             if (activity.isFinishing()) {
-                Log.d(Http.LOG_TAG, StringUtils.plusString(error.getId(), " on Error activity is finishing to do nothing "));
+                Log.d(TAG, StringUtils.plusString(error.getId(), " on Error activity is finishing to do nothing "));
                 return true;
             }
         }
 
         if (error.getException() instanceof CanceledException) {
-            Log.d(Http.LOG_TAG, StringUtils.plusString(error.getId(), "  is canceled "));
+            Log.d(TAG, StringUtils.plusString(error.getId(), "  is canceled "));
             return true;
         }
         return false;
@@ -131,7 +134,7 @@ public abstract class Callback<T>{
         if (mContext != null && mContext instanceof Activity) {
             Activity activity = (Activity) mContext;
             if (activity.isFinishing()) {
-                Log.d("Http", StringUtils.plusString(id, " on Error activity is finishing to do nothing "));
+                Log.d(TAG, StringUtils.plusString(id, " on Error activity is finishing to do nothing "));
                 return true;
             }
         }

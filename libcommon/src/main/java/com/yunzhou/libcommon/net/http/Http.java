@@ -14,9 +14,6 @@ import com.yunzhou.libcommon.net.http.request.PostRequest;
  */
 
 public class Http {
-
-    public static final String LOG_TAG = "http";
-
     private static Http mInstance;
     private HttpConfig mHttpConfig;
     private Executor mExecutor;

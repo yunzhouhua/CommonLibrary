@@ -8,6 +8,7 @@ import com.yunzhou.libcommon.net.http.callback.Callback;
 import com.yunzhou.libcommon.net.http.config.HttpConfig;
 import com.yunzhou.libcommon.net.http.cookie.CookieManager;
 import com.yunzhou.libcommon.net.http.exception.CanceledException;
+import com.yunzhou.libcommon.net.http.log.NetLog;
 import com.yunzhou.libcommon.net.http.request.Request;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
@@ -47,6 +48,7 @@ public class OKHttpExecutor extends Executor {
 
     @Override
     public <T> void execute(Request request, Callback<T> callback) {
+        NetLog.start(request);
         executeOkHttp(request, request.generateRequest(callback), callback);
     }
 
@@ -72,25 +74,27 @@ public class OKHttpExecutor extends Executor {
         call.enqueue(new okhttp3.Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                sendFailCallback(request.getId(), call, e, callback, null);
+                sendFailCallback(request, call, e, callback, null);
             }
 
             @Override
             public void onResponse(Call call, okhttp3.Response okHttpResponse) throws IOException {
                 if(call.isCanceled()){
-                    sendFailCallback(request.getId(), call,
+                    sendFailCallback(request, call,
                             new IOException("Call is canceled!"), callback, okHttpResponse);
+                    return;
                 }
                 if(!okHttpResponse.isSuccessful()){
-                    sendFailCallback(request.getId(), call,
+                    sendFailCallback(request, call,
                             new IOException("Request failed, response's code is " + okHttpResponse.code()),
                             callback, okHttpResponse);
+                    return;
                 }
                 try {
                     T t = callback.parseResponse(request.getId(), okHttpResponse);
-                    sendSuccessCallback(request.getId(), t, callback);
+                    sendSuccessCallback(request, t, callback);
                 }catch (Exception e){
-                    sendFailCallback(request.getId(), call, e, callback, okHttpResponse);
+                    sendFailCallback(request, call, e, callback, okHttpResponse);
                 }finally {
                     if(okHttpResponse.body() != null) {
                         okHttpResponse.body().close();
@@ -100,15 +104,16 @@ public class OKHttpExecutor extends Executor {
         });
     }
 
-    private <T> void sendSuccessCallback(long id, T t, Callback<T> callback) {
+    private <T> void sendSuccessCallback(Request request, T t, Callback<T> callback) {
+        NetLog.endSuccess(request.getUrl(), t);
         if(callback != null){
-            callback.runOnUIThreadSuccess(id, t);
+            callback.runOnUIThreadSuccess(request.getId(), t);
         }
     }
 
-    private <T> void sendFailCallback(long id, Call call, Exception e, Callback<T> callback, okhttp3.Response response) {
+    private <T> void sendFailCallback(Request request, Call call, Exception e, Callback<T> callback, okhttp3.Response response) {
         HttpError error = new HttpError();
-        error.setId(id);
+        error.setId(request.getId());
         if(call.isCanceled()){
             error.setCode(HttpError.ERROR_CANCELED);
             error.setMessage("Call is canceled");
@@ -120,6 +125,7 @@ public class OKHttpExecutor extends Executor {
             error.setMessage(e.getMessage());
             error.setException(e);
         }
+        NetLog.endFail(request.getUrl(), error);
         if(callback != null){
             callback.runOnUIThreadFailed(error);
         }
