@@ -14,4 +14,9 @@ public class MediaType {
      * Json 格式
      */
     public static final String JSON = "application/json;charset=UTF-8";
+
+    /**
+     * 普通文本格式
+     */
+    public static final String TEXT = "text/plain;charset=UTF-8";
 }

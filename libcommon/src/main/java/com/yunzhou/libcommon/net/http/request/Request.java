@@ -2,15 +2,14 @@ package com.yunzhou.libcommon.net.http.request;
 
 import android.text.TextUtils;
 import android.util.ArrayMap;
-
 import com.yunzhou.libcommon.net.http.Http;
 import com.yunzhou.libcommon.net.http.Method;
 import com.yunzhou.libcommon.net.http.callback.Callback;
 import com.yunzhou.libcommon.net.http.config.HttpConfig;
 import com.yunzhou.libcommon.net.http.ssl.SSLParams;
-
-import java.io.File;
+import com.yunzhou.libcommon.utils.StringUtils;
 import java.util.Map;
+import okhttp3.RequestBody;
 
 /**
  * Created by huayunzhou on 2017/9/27.
@@ -19,29 +18,85 @@ import java.util.Map;
 public abstract class Request<T extends Request> {
 
     private long id;
+    private Method mMethod;
     private String url;
+    //finalUrl主要用于存放get请求中拼接后的url
     private String finalUrl;
     private ArrayMap<String, String> headers;
-    private RequestParams mRequestParams;
-    private Method method;
+    private ArrayMap<String, String> params;
+    private Object tag;
+    private HttpConfig httpConfig;
+    private okhttp3.Request.Builder builder;
+    //下面这些属性用于区分当前请求是否需要使用新的okHttpClient
     private SSLParams mSsl;
     private long readTimeout;
     private long writeTimeout;
     private long connectTimeout;
-    private Object tag;
-    private HttpConfig httpConfig;
 
+    /**
+     * post请求创建RequestBody，增加灵活性
+     * @return
+     */
+    protected abstract RequestBody buildRequestBody();
+
+    /**
+     * 不同请求，创建不同的Request,增加灵活性
+     * @return
+     */
+    protected abstract okhttp3.Request buildRequest(RequestBody requestBody);
 
     public Request(Method method){
-        this.method = method;
-        headers = new ArrayMap<>();
-        mSsl = null;
-        readTimeout = 0;
-        writeTimeout = 0;
-        connectTimeout = 0;
-        httpConfig = Http.getConfig();
+        //id默认为当前时间戳
+        this.id = System.currentTimeMillis();
+        this.mMethod = method;
+        this.builder = new okhttp3.Request.Builder();
+        this.headers = new ArrayMap<>();
+        this.mSsl = null;
+        this.readTimeout = 0;
+        this.writeTimeout = 0;
+        this.connectTimeout = 0;
+        this.httpConfig = Http.getConfig();
     }
 
+    public final okhttp3.Request generateRequest(Callback callback){
+        initBuild();
+        RequestBody requestBody = buildRequestBody();
+        RequestBody wrapRequestBody = wrapRequestBody(requestBody, callback);
+        okhttp3.Request request = buildRequest(wrapRequestBody);
+        return request;
+    }
+
+    /**
+     * build基本数据配置，url/param/tag之类
+     */
+    private void initBuild() {
+        if(TextUtils.isEmpty(this.url)){
+            throw new IllegalStateException("url can't be null");
+        }
+        if(this.mMethod == Method.GET) {
+            urlParamPack();
+        }
+        //设置请求url
+        builder = builder.url(TextUtils.isEmpty(getFinalUrl()) ? getUrl() : getFinalUrl());
+        //设置请求头
+        appendHeaders();
+        //设置tag
+        if(tag != null){
+            builder = builder.tag(tag);
+        }
+    }
+
+    public RequestBody wrapRequestBody(RequestBody requestBody, Callback callback){
+        return requestBody;
+    }
+
+    private void appendHeaders(){
+        if(this.headers != null && this.headers.size() > 0){
+            for(int i = 0; i < this.headers.size(); i++){
+                this.builder = this.builder.addHeader(this.headers.keyAt(i), this.headers.valueAt(i));
+            }
+        }
+    }
     /**
      * 设置请求路径
      * @param url
@@ -50,14 +105,6 @@ public abstract class Request<T extends Request> {
     public T url(String url){
         this.url = url;
         return (T)this;
-    }
-
-    public String getFinalUrl() {
-        return finalUrl;
-    }
-
-    public void setFinalUrl(String finalUrl) {
-        this.finalUrl = finalUrl;
     }
 
     //==================================== 添加请求头 ===================================
@@ -180,7 +227,10 @@ public abstract class Request<T extends Request> {
      */
     public T addParam(String key, String value){
         if(!TextUtils.isEmpty(key) && !TextUtils.isEmpty(value)){
-            getRequestParams().addParam(key, value);
+            if(this.params == null){
+                this.params = new ArrayMap<>();
+            }
+            this.params.put(key, value);
         }
         return (T)this;
     }
@@ -193,7 +243,10 @@ public abstract class Request<T extends Request> {
      */
     public T addParam(String key, int value){
         if(!TextUtils.isEmpty(key)){
-            getRequestParams().addParam(key, String.valueOf(value));
+            if(this.params == null){
+                this.params = new ArrayMap<>();
+            }
+            this.params.put(key, String.valueOf(value));
         }
         return (T)this;
     }
@@ -206,7 +259,10 @@ public abstract class Request<T extends Request> {
      */
     public T addParam(String key, float value){
         if(!TextUtils.isEmpty(key)){
-            getRequestParams().addParam(key, String.valueOf(value));
+            if(this.params == null){
+                this.params = new ArrayMap<>();
+            }
+            this.params.put(key, String.valueOf(value));
         }
         return (T)this;
     }
@@ -219,7 +275,10 @@ public abstract class Request<T extends Request> {
      */
     public T addParam(String key, long value){
         if(!TextUtils.isEmpty(key)){
-            getRequestParams().addParam(key, String.valueOf(value));
+            if(this.params == null){
+                this.params = new ArrayMap<>();
+            }
+            this.params.put(key, String.valueOf(value));
         }
         return (T)this;
     }
@@ -232,7 +291,10 @@ public abstract class Request<T extends Request> {
      */
     public T addParam(String key, double value){
         if(!TextUtils.isEmpty(key)){
-            getRequestParams().addParam(key, String.valueOf(value));
+            if(this.params == null){
+                this.params = new ArrayMap<>();
+            }
+            this.params.put(key, String.valueOf(value));
         }
         return (T)this;
     }
@@ -245,7 +307,10 @@ public abstract class Request<T extends Request> {
      */
     public T addParam(String key, boolean value){
         if(!TextUtils.isEmpty(key)){
-            getRequestParams().addParam(key, String.valueOf(value));
+            if(this.params == null){
+                this.params = new ArrayMap<>();
+            }
+            this.params.put(key, String.valueOf(value));
         }
         return (T)this;
     }
@@ -258,7 +323,10 @@ public abstract class Request<T extends Request> {
     public T params(Map<String, String> params){
         if(params != null && params.size() > 0){
             for(Map.Entry<String, String> entry : params.entrySet()){
-                getRequestParams().addParam(entry.getKey(), entry.getValue());
+                if(this.params == null){
+                    this.params = new ArrayMap<>();
+                }
+                this.params.put(entry.getKey(), entry.getValue());
             }
         }
         //清空map
@@ -275,11 +343,24 @@ public abstract class Request<T extends Request> {
     public T params(ArrayMap<String, String> params){
         if(params != null && params.size() > 0){
             for(int i = 0; i < params.size(); i++){
-                getRequestParams().addParam(params.keyAt(i), params.valueAt(i));
+                if(this.params == null){
+                    this.params = new ArrayMap<>();
+                }
+                this.params.put(params.keyAt(i), params.valueAt(i));
             }
         }
         params.clear();
         params = null;
+        return (T)this;
+    }
+
+    /**
+     * 设置请求id
+     * @param id
+     * @return
+     */
+    public T id(long id){
+        this.id = id;
         return (T)this;
     }
 
@@ -345,66 +426,6 @@ public abstract class Request<T extends Request> {
         }
     }
 
-    public T file(File stream){
-        if(stream != null && stream.isFile() && stream.exists()) {
-            getRequestParams().addStream(stream);
-        }
-        return (T)this;
-    }
-
-    public T bytes(byte[] stream) {
-        if (stream.length > 0){
-            getRequestParams().addStream(stream);
-        }
-        return (T)this;
-    }
-
-    /**
-     * 要求使用json格式的字符串
-     * @param stream
-     * @return
-     */
-    public T json(String stream){
-        if(!TextUtils.isEmpty(stream)){
-            getRequestParams().addStream(stream);
-        }
-        return (T)this;
-    }
-
-    public T file(String key, File stream){
-        if(!TextUtils.isEmpty(key) && stream != null && stream.isFile() && stream.exists()) {
-            getRequestParams().addStream(key, stream);
-        }
-        return (T)this;
-    }
-
-    public T bytes(String key, byte[] stream){
-        if (!TextUtils.isEmpty(key) && stream.length > 0){
-            getRequestParams().addStream(key, stream);
-        }
-        return (T)this;
-    }
-
-    /**
-     * 要求使用json格式的字符串
-     * @param key
-     * @param stream
-     * @return
-     */
-    public T json(String key, String stream){
-        if(!TextUtils.isEmpty(key) && !TextUtils.isEmpty(stream)){
-            getRequestParams().addStream(key, stream);
-        }
-        return (T)this;
-    }
-
-    public RequestParams getRequestParams() {
-        if(this.mRequestParams == null){
-            this.mRequestParams = new RequestParams();
-        }
-        return mRequestParams;
-    }
-
     /**
      * 设置tag
      * @param tag
@@ -427,15 +448,70 @@ public abstract class Request<T extends Request> {
         return url;
     }
 
-    public Method getMethod() {
-        return method;
+    public void setUrl(String url){
+        this.url = url;
     }
 
-    public void setMethod(Method method) {
-        this.method = method;
+    public ArrayMap<String, String> getParams() {
+        return params;
+    }
+
+    public void setParams(ArrayMap<String, String> params) {
+        this.params = params;
+    }
+
+    protected okhttp3.Request.Builder getBuilder() {
+        return builder;
+    }
+
+    protected void setBuilder(okhttp3.Request.Builder builder) {
+        this.builder = builder;
+    }
+
+    public String getFinalUrl() {
+        return finalUrl;
+    }
+
+    public void setFinalUrl(String finalUrl) {
+        this.finalUrl = finalUrl;
     }
 
     public final void execute(Callback callback){
         Http.getExecutor().execute(this, callback);
+    }
+
+    /**
+     * 将url与请求参数拼接成字符串
+     */
+    private void urlParamPack() {
+        String url = getUrl();
+        if(TextUtils.isEmpty(url)){
+            throw new IllegalStateException("url can't be null!");
+        }
+        if(getParams() == null || getParams().size() <= 0){
+            return ;
+        }else{
+            String params = buildParams(getParams());
+            String finalUrl = null;
+            if(url.contains("?")){
+                setFinalUrl(StringUtils.plusString(url, "&", params));
+            }else{
+                setFinalUrl(StringUtils.plusString(url, "?", params));
+            }
+        }
+    }
+
+    private String buildParams(ArrayMap<String, String> params) {
+        if(params == null || params.size() <= 0){
+            return StringUtils.EMPTY;
+        }
+        StringBuilder builder = new StringBuilder();
+        for(int i = 0; i < params.size(); i++){
+            builder.append("&").append(params.keyAt(i)).append("=").append(params.valueAt(i));
+        }
+        if(builder.length() > 0){
+            builder.deleteCharAt(0);
+        }
+        return builder.toString();
     }
 }

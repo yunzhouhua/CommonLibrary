@@ -11,6 +11,7 @@ import com.yunzhou.commonlibrary.R;
 import com.yunzhou.commonlibrary.bean.ResponseTemplate;
 import com.yunzhou.libcommon.net.http.Http;
 import com.yunzhou.libcommon.net.http.HttpError;
+import com.yunzhou.libcommon.net.http.callback.FileCallBack;
 import com.yunzhou.libcommon.net.http.callback.JsonCallBack;
 import com.yunzhou.libcommon.net.http.callback.StringCallBack;
 
@@ -30,7 +31,7 @@ import okhttp3.Response;
 public class HttpTestActivity extends AppCompatActivity implements View.OnClickListener{
 
     private static final String TAG = "HttpTestActivity";
-    private static final String HOST = "http://192.168.1.106:8080/webapp/";
+    private static final String HOST = "http://192.168.2.109:8080/webapp/";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,7 +72,7 @@ public class HttpTestActivity extends AppCompatActivity implements View.OnClickL
                             }
 
                             @Override
-                            protected void onSuccess(String result) {
+                            protected void onSuccess(long id, String result) {
                                 Log.e(TAG, "onSuccess: " + result);
                             }
                         });
@@ -101,21 +102,10 @@ public class HttpTestActivity extends AppCompatActivity implements View.OnClickL
                     }
 
                     @Override
-                    protected void onSuccess(ResponseTemplate<Object> result) {
+                    protected void onSuccess(long id, ResponseTemplate<Object> result) {
                         Log.e(TAG, "result : " + result );
                     }
                 });
-//                .execute(new StringCallBack() {
-//                    @Override
-//                    protected void onFailed(@NonNull HttpError error) {
-//                        Log.e(TAG, "Failed : " + error.getCode() + " : " + error.getMessage());
-//                    }
-//
-//                    @Override
-//                    protected void onSuccess(String result) {
-//                        Log.e(TAG, "result : " + result );
-//                    }
-//                });
     }
 
     public void post() {
@@ -135,7 +125,7 @@ public class HttpTestActivity extends AppCompatActivity implements View.OnClickL
                     }
 
                     @Override
-                    protected void onSuccess(ResponseTemplate<Object> result) {
+                    protected void onSuccess(long id, ResponseTemplate<Object> result) {
                         Log.e(TAG, "result : " + result );
                     }
                 });
@@ -146,56 +136,48 @@ public class HttpTestActivity extends AppCompatActivity implements View.OnClickL
         File file = new File(path);
         Http.post()
                 .url(HOST + "fileUploadPage")
-                .file("file", file)
+                .addPart("file", file)
                 .setConnectTimeout(60000)
                 .setReadTimeout(60000)
                 .setWriteTimeout(60000)
                 .execute(new StringCallBack() {
-            @Override
-            protected void onFailed(@NonNull HttpError error) {
-                int a = 0;
-            }
+                    @Override
+                    protected void onFailed(@NonNull HttpError error) {
+                        Log.e(TAG, "Failed : " + error.getCode() + " : " + error.getMessage());
+                    }
 
-            @Override
-            protected void onSuccess(String result) {
-                int a = 0;
-            }
-        });
+                    @Override
+                    protected void onSuccess(long id, String result) {
+                        Log.e(TAG, "Success : " + result);
+                    }
+
+                    @Override
+                    public void updateProgress(long id, long current, long total) {
+                        Log.e(TAG, "Thread : " + Thread.currentThread().getId() + " ;; " + current + " / " + total);
+                    }
+                });
     }
 
     private void download() {
-        String path= Environment.getExternalStorageDirectory() + File.separator + "jike" + File.separator + "commons-io-2.5.jar";
-        File file = new File(path);
+        String path= Environment.getExternalStorageDirectory() + File.separator + "jike";
+        Log.e(TAG, "download: " + Thread.currentThread().getId());
+        Http.get()
+                .url("http://192.168.2.109:8080/okhttpdemo/spring-framework.zip")
+                .execute(new FileCallBack(path, "spring-framework.zip") {
+                    @Override
+                    protected void onFailed(@NonNull HttpError error) {
+                        Log.e(TAG, "Failed : " + error.getCode() + " : " + error.getMessage());
+                    }
 
-        OkHttpClient okHttpClient = new OkHttpClient.Builder().build();
-        RequestBody fileBody = RequestBody.create(MediaType.parse("application/octet-stream"), file);
-        RequestBody requestBody = new MultipartBody.Builder()
-                .setType(MultipartBody.FORM)
-                .addPart(Headers.of(
-                        "Content-Disposition",
-                        "form-data; name=\"username\""),
-                        RequestBody.create(null, "HGR"))
-                .addPart(Headers.of(
-                        "Content-Disposition",
-                        "form-data; name=\"mFile\"; filename=\"" + file.getName() + "\""), fileBody)
-                .build();
-        Request request = new Request.Builder()
-                .url("http://192.168.2.110:8080/webapp/upload3")
-                .post(requestBody)
-                .build();
-        Call call = okHttpClient.newCall(request);
-        call.enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
+                    @Override
+                    protected void onSuccess(long id, File result) {
+                        Log.e(TAG, "Success : " + result.getAbsolutePath());
+                    }
 
-                Log.e(TAG, "failure upload!");
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-
-                Log.i(TAG, "success upload!");
-            }
-        });
+                    @Override
+                    public void updateProgress(long id, long current, long total) {
+                        Log.e(TAG, "Thread : " + Thread.currentThread().getId() + " ;; " + current + " / " + total);
+                    }
+                });
     }
 }

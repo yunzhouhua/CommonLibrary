@@ -1,15 +1,12 @@
 package com.yunzhou.libcommon.net.http.cookie;
 
 import android.content.Context;
-
 import com.yunzhou.libcommon.net.http.cookie.annotation.CookieType;
 import com.yunzhou.libcommon.net.http.cookie.store.CookieStore;
 import com.yunzhou.libcommon.net.http.cookie.store.MemoryCookieStore;
 import com.yunzhou.libcommon.net.http.cookie.store.PersistentCookieStore;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import okhttp3.Cookie;
 import okhttp3.CookieJar;
 import okhttp3.HttpUrl;

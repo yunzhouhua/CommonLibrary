@@ -18,10 +18,7 @@ package com.yunzhou.libcommon.net.http.callback;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-
-import com.yunzhou.libcommon.net.http.exception.HttpErrorException;
-import com.yunzhou.libcommon.net.http.request.Request;
-import com.yunzhou.libcommon.net.http.response.Response;
+import java.io.IOException;
 
 
 /**
@@ -39,8 +36,8 @@ public abstract class StringCallBack extends Callback<String> {
     }
 
     @Override
-    public String parseResponse(@NonNull final Request request, @NonNull final Response response) throws HttpErrorException {
-        String body = new String(response.getBody());
+    public String parseResponse(long id, @NonNull okhttp3.Response response) throws IOException {
+        String body = new String(response.body().bytes());
         return body;
     }
 }

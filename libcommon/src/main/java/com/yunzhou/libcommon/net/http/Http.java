@@ -3,19 +3,19 @@ package com.yunzhou.libcommon.net.http;
 import android.content.Context;
 import android.content.res.Resources;
 import android.support.annotation.NonNull;
-
 import com.yunzhou.libcommon.net.http.config.HttpConfig;
 import com.yunzhou.libcommon.net.http.excutor.Executor;
 import com.yunzhou.libcommon.net.http.excutor.OKHttpExecutor;
 import com.yunzhou.libcommon.net.http.request.GetRequest;
 import com.yunzhou.libcommon.net.http.request.PostRequest;
-import com.yunzhou.libcommon.net.http.request.Request;
 
 /**
  * Created by huayunzhou on 2017/9/26.
  */
 
 public class Http {
+
+    public static final String LOG_TAG = "http";
 
     private static Http mInstance;
     private HttpConfig mHttpConfig;
@@ -59,7 +59,7 @@ public class Http {
      * get请求
      * @return
      */
-    public static Request get(){
+    public static GetRequest get(){
         return new GetRequest(){} ;
     }
 
@@ -67,7 +67,7 @@ public class Http {
      * post请求
      * @return
      */
-    public static Request post(){
+    public static PostRequest post(){
         return new PostRequest();
     }
 

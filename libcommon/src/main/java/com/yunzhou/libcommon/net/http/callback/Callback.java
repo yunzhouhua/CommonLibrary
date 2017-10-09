@@ -8,19 +8,18 @@ import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Log;
-
 import com.yunzhou.libcommon.R;
 import com.yunzhou.libcommon.net.http.Http;
 import com.yunzhou.libcommon.net.http.HttpError;
 import com.yunzhou.libcommon.net.http.exception.CanceledException;
-import com.yunzhou.libcommon.net.http.exception.HttpErrorException;
-import com.yunzhou.libcommon.net.http.request.Request;
-import com.yunzhou.libcommon.net.http.response.Response;
 import com.yunzhou.libcommon.utils.StringUtils;
 
+import java.io.IOException;
 import java.net.ConnectException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
+
+import okhttp3.Response;
 
 /**
  * 网络请求回调
@@ -47,9 +46,17 @@ public abstract class Callback<T>{
      * 请求成功回调
      * @param result
      */
-    protected abstract void onSuccess(T result);
+    protected abstract void onSuccess(long id, T result);
 
-    public abstract T parseResponse(@NonNull final Request request, @NonNull final Response response) throws HttpErrorException;
+    /**
+     * 更新进度，如果需要监听上传/下载进度时可以重写他
+     * @param id
+     * @param current
+     * @param total
+     */
+    public void updateProgress(long id, long current, long total){};
+
+    public abstract T parseResponse(long id, @NonNull final Response response) throws IOException;
 
     public final void runOnUIThreadFailed(@NonNull final HttpError error){
         // Step 1. 检测是否需要终端操作
@@ -77,8 +84,8 @@ public abstract class Callback<T>{
         });
     }
 
-    public final void runOnUIThreadSuccess(@NonNull Response response, @NonNull final T result){
-        boolean interruption = checkInterruptionSuccessed(response);
+    public final void runOnUIThreadSuccess(final long id, @NonNull final T result){
+        boolean interruption = checkInterruptionSuccessed(id);
         if(interruption){
             Log.d("Http", "sendFailResult: interruption");
             return ;
@@ -87,7 +94,7 @@ public abstract class Callback<T>{
         handler.post(new Runnable() {
             @Override
             public void run() {
-                onSuccess(result);
+                onSuccess(id, result);
             }
         });
     }
@@ -102,13 +109,13 @@ public abstract class Callback<T>{
         if (mContext != null && mContext instanceof Activity) {
             Activity activity = (Activity) mContext;
             if (activity.isFinishing()) {
-                Log.d("Http", StringUtils.plusString(error.getId(), " on Error activity is finishing to do nothing "));
+                Log.d(Http.LOG_TAG, StringUtils.plusString(error.getId(), " on Error activity is finishing to do nothing "));
                 return true;
             }
         }
 
         if (error.getException() instanceof CanceledException) {
-            Log.d("Http", StringUtils.plusString(error.getId(), "  is canceled "));
+            Log.d(Http.LOG_TAG, StringUtils.plusString(error.getId(), "  is canceled "));
             return true;
         }
         return false;
@@ -120,11 +127,11 @@ public abstract class Callback<T>{
      * 例如： 如果context 已经finish了 那么再进行继续操作了
      */
     @SuppressWarnings("WeakerAccess")
-    protected boolean checkInterruptionSuccessed(@NonNull final Response response) {
+    protected boolean checkInterruptionSuccessed(long id) {
         if (mContext != null && mContext instanceof Activity) {
             Activity activity = (Activity) mContext;
             if (activity.isFinishing()) {
-                Log.d("Http", StringUtils.plusString(response.getId(), " on Error activity is finishing to do nothing "));
+                Log.d("Http", StringUtils.plusString(id, " on Error activity is finishing to do nothing "));
                 return true;
             }
         }

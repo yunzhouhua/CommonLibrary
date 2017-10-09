@@ -18,6 +18,7 @@ package com.yunzhou.libcommon.net.http.request;
 
 
 import com.yunzhou.libcommon.net.http.Method;
+import okhttp3.RequestBody;
 
 /**
  * Created by Bright.Yu on 2017/2/16.
@@ -28,5 +29,15 @@ import com.yunzhou.libcommon.net.http.Method;
 public class GetRequest extends Request<GetRequest> {
     public GetRequest() {
         super(Method.GET);
+    }
+
+    @Override
+    protected RequestBody buildRequestBody() {
+        return null;
+    }
+
+    @Override
+    protected okhttp3.Request buildRequest(RequestBody requestBody) {
+        return getBuilder().get().build();
     }
 }

@@ -18,12 +18,8 @@ package com.yunzhou.libcommon.net.http.callback;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-
 import com.alibaba.fastjson.JSON;
-import com.yunzhou.libcommon.net.http.exception.HttpErrorException;
-import com.yunzhou.libcommon.net.http.request.Request;
-import com.yunzhou.libcommon.net.http.response.Response;
-
+import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
@@ -44,7 +40,7 @@ public abstract class JsonCallBack<T> extends Callback<T> {
     }
 
     @Override
-    public T parseResponse(@NonNull final Request request, @NonNull final Response response) throws HttpErrorException {
+    public T parseResponse(long id, @NonNull okhttp3.Response response) throws IOException {
         Type genType = getClass().getGenericSuperclass();
 
         Type type;
@@ -55,6 +51,6 @@ public abstract class JsonCallBack<T> extends Callback<T> {
             type = String.class;
         }
 
-        return JSON.parseObject(response.getBody(), type);
+        return JSON.parseObject(response.body().bytes(), type);
     }
 }
