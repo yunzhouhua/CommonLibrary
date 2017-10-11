@@ -23,7 +23,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".activity.RoundImgActivity" />
-        <activity android:name=".activity.HttpTestActivity"></activity>
+        <activity android:name=".activity.HttpTestActivity" />
+        <activity android:name=".activity.GlideActivity"></activity>
     </application>
 
 </manifest>

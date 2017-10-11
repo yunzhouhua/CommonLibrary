@@ -27,4 +27,6 @@ dependencies {
     compile 'com.alibaba:fastjson:1.1.63.android'
     //  网络请求框架
     compile "com.squareup.okhttp3:okhttp:3.8.0"
+    // Glide
+    compile 'com.github.bumptech.glide:glide:3.7.0'
 }

@@ -36,6 +36,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         findViewById(R.id.round_img).setOnClickListener(this);
         findViewById(R.id.http).setOnClickListener(this);
+        findViewById(R.id.glide).setOnClickListener(this);
 
         Log.e("aa", "" + ScreenUtils.getStatusBarHeight(this));
 
@@ -134,6 +135,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.round_img:
                 RouteManager.target(this, RoundImgActivity.class)
+                        .goSilence();
+                break;
+            case R.id.glide:
+                RouteManager.target(this, GlideActivity.class)
                         .goSilence();
                 break;
         }

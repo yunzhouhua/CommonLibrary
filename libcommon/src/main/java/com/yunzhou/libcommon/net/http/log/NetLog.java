@@ -14,7 +14,7 @@ public class NetLog {
     private static final String TAG = "HTTP";
 
     public static void start(Request request){
-        Log.d(TAG, "==================== START ====================");
+        Log.d(TAG, "======================================== START ========================================");
         Log.d(TAG, "== url : " + request.getUrl());
         if(request.getParams() != null && request.getParams().size() > 0) {
             Log.d(TAG, "== params : " + request.getParams().toString());
@@ -22,14 +22,14 @@ public class NetLog {
     }
 
     public static void endFail(String url, HttpError error){
-        Log.d(TAG, "==================== END FAIL ====================");
+        Log.d(TAG, "======================================== END FAIL ========================================");
         Log.d(TAG, "== url : " + url);
         Log.d(TAG, "== error code : " + error.getCode());
         Log.d(TAG, "== error msg : " + error.getMessage());
     }
 
     public static void endSuccess(String url, Object result){
-        Log.d(TAG, "==================== END SUCCESS ====================");
+        Log.d(TAG, "======================================== END SUCCESS ========================================");
         Log.d(TAG, "== url : " + url);
         if(result == null){
             Log.d(TAG, "== result : null");
