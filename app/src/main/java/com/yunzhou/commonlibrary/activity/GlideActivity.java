@@ -51,12 +51,14 @@ public class GlideActivity extends AppCompatActivity implements View.OnClickList
 //                        .load("http://inthecheesefactory.com/uploads/source/glidepicasso/cover.jpg")
                         .load("http://diy.qqjay.com/u2/2012/0618/ed6982355b1340095aeaf79072bdc1cc.jpg")
                         .transform(new RoundTransform(this, RoundTransform.TYPE_CIRCLE, 10, Color.GREEN))
+                        .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                         .into(mImageView);
                 break;
             case R.id.load_round:
                 Glide.with(this)
                         .load("http://inthecheesefactory.com/uploads/source/glidepicasso/cover.jpg")
                         .transform(new RoundTransform(this, RoundTransform.TYPE_ROUND, 10, Color.RED, 20))
+                        .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                         .into(mImageView);
                 break;
         }

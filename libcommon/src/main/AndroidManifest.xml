@@ -11,6 +11,10 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
+        <meta-data
+            android:name="com.yunzhou.libcommon.glide.CustomGlideModule"
+            android:value="GlideModule" />
+
     </application>
 
 </manifest>
