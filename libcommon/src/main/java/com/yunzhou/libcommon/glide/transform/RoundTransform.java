@@ -81,7 +81,7 @@ public class RoundTransform extends BitmapTransformation{
     }
 
     /**
-     * 原型变换
+     * 圆形变换
      * @param pool
      * @param toTransform
      * @return
@@ -95,11 +95,11 @@ public class RoundTransform extends BitmapTransformation{
         int startY = (toTransform.getHeight() - squareWidth) / 2;
         //截取中间方块
         Bitmap squareBitmap = Bitmap.createBitmap(toTransform, startX, startY, squareWidth, squareWidth);
-        Bitmap toReuse = pool.get(squareWidth, squareWidth, Bitmap.Config.ARGB_8888);
-        if(toReuse == null){
-            toReuse = Bitmap.createBitmap(squareWidth, squareWidth, Bitmap.Config.ARGB_8888);
+        Bitmap result = pool.get(squareWidth, squareWidth, Bitmap.Config.ARGB_8888);
+        if(result == null){
+            result = Bitmap.createBitmap(squareWidth, squareWidth, Bitmap.Config.ARGB_8888);
         }
-        Canvas canvas = new Canvas(toReuse);
+        Canvas canvas = new Canvas(result);
         Paint shaderPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         shaderPaint.setDither(true);
         shaderPaint.setShader(new BitmapShader(squareBitmap, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP));
@@ -108,11 +108,11 @@ public class RoundTransform extends BitmapTransformation{
         if(mBorderPaint != null){
             canvas.drawCircle(squareWidth / 2, squareWidth / 2, squareWidth / 2 - mBorderWidth / 2, mBorderPaint);
         }
-        if(toReuse != null){
-            pool.put(toReuse);
+        if(result != null){
+            pool.put(result);
         }
         squareBitmap.recycle();
-        return toReuse;
+        return result;
     }
 
     /**
@@ -143,6 +143,9 @@ public class RoundTransform extends BitmapTransformation{
 
         if (mBorderPaint != null) {
             canvas.drawRoundRect(rectF, mBorderRadius, mBorderRadius, mBorderPaint);
+        }
+        if(result != null){
+            pool.put(result);
         }
         return result;
     }
