@@ -24,7 +24,8 @@
         </activity>
         <activity android:name=".activity.RoundImgActivity" />
         <activity android:name=".activity.HttpTestActivity" />
-        <activity android:name=".activity.GlideActivity"></activity>
+        <activity android:name=".activity.GlideActivity" />
+        <activity android:name=".activity.RefreshListActivity"></activity>
     </application>
 
 </manifest>

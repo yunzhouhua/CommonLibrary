@@ -1,8 +1,6 @@
 package com.yunzhou.commonlibrary.activity;
 
-import android.content.Context;
 import android.content.Intent;
-import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.ArrayMap;
@@ -37,6 +35,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         findViewById(R.id.round_img).setOnClickListener(this);
         findViewById(R.id.http).setOnClickListener(this);
         findViewById(R.id.glide).setOnClickListener(this);
+        findViewById(R.id.refresh_load_more).setOnClickListener(this);
 
         Log.e("aa", "" + ScreenUtils.getStatusBarHeight(this));
 
@@ -140,6 +139,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.glide:
                 RouteManager.target(this, GlideActivity.class)
                         .goSilence();
+                break;
+            case R.id.refresh_load_more:
+                RouteManager.target(this, RefreshListActivity.class)
+                        .goRightSlide();
                 break;
         }
     }
