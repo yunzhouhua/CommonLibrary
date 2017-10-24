@@ -63,6 +63,15 @@ public final class ImageUtils {
     private static final int DEFAULT_COMPRESS_QUALITY = 75;
 
     /**
+     * 默认压缩尺寸的宽
+     */
+    private static final int DEFALUT_COMPRESS_WIDTH = 720;
+    /**
+     * 默认压缩尺寸的高
+     */
+    private static final int DEFAULT_COMPRESS_HEIGHT = 1280;
+
+    /**
      * Drawable转Bitmap
      */
     public static Bitmap drawableToBitmap(Drawable drawable) {
@@ -340,13 +349,90 @@ public final class ImageUtils {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         image.compress(Bitmap.CompressFormat.JPEG, 100, baos);
         // 循环判断如果压缩后图片是否大于指定大小,大于继续压缩
-        while (baos.toByteArray().length / 1024 > pictureSize) {
+        while (baos.toByteArray().length / 1024 > pictureSize && options >= 0) {
             baos.reset();// 重置baos即清空baos
             // 这里压缩options%，把压缩后的数据存放到baos中
             image.compress(Bitmap.CompressFormat.JPEG, options, baos);
             options -= 10;// 每次都减少10
         }
         return saveBitmap(context, image, options);
+    }
+
+    public static void compressBitmap(String originPath, String result ){
+        // TODO: 2017/10/23  压缩图片：尺寸，质量，旋转角度 
+    }
+
+
+    /**
+     * 获取指定大小的Bitmap
+     * @param path
+     * @return
+     */
+    public static Bitmap getSampleBitmap(String path){
+        return getSampleBitmap(path, DEFALUT_COMPRESS_WIDTH, DEFAULT_COMPRESS_HEIGHT);
+    }
+
+    /**
+     * 获取指定大小的Bitmap
+     * @param path
+     * @param reqWidth
+     * @param reqHeight
+     * @return
+     */
+    public static Bitmap getSampleBitmap(String path, int reqWidth, int reqHeight){
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(path, options);
+        options.inJustDecodeBounds = false;
+        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+        Bitmap result = BitmapFactory.decodeFile(path, options);
+        //result = getScaledBitmap(result, reqWidth, reqHeight);
+        return result;
+    }
+
+    /**
+     * 获取指定大小的Bitmap
+     * @param context
+     * @param resId
+     * @return
+     */
+    public static Bitmap getSampleBitmap(Context context, int resId){
+        return getSampleBitmap(context, resId, DEFALUT_COMPRESS_WIDTH, DEFAULT_COMPRESS_HEIGHT);
+    }
+
+    /**
+     * 获取指定大小的Bitmap
+     * @param context
+     * @param resId
+     * @param reqWidth
+     * @param reqHeight
+     * @return
+     */
+    public static Bitmap getSampleBitmap(Context context, int resId, int reqWidth, int reqHeight){
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeResource(context.getResources(), resId, options);
+        options.inJustDecodeBounds = false;
+        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+        Bitmap result = BitmapFactory.decodeResource(context.getResources(), resId, options);
+        //result = getScaledBitmap(result, reqWidth, reqHeight);
+        return result;
+    }
+
+
+    /**
+     * 获取所缩小/放大后的bitmap
+     * @param src
+     * @param destWidth
+     * @param destHeight
+     * @return
+     */
+    public static Bitmap getScaledBitmap(Bitmap src, int destWidth, int destHeight){
+        Bitmap dest = Bitmap.createScaledBitmap(src, destWidth, destHeight, true);
+        if(src != dest){
+            src.recycle();
+        }
+        return dest;
     }
 
     /**
@@ -370,7 +456,7 @@ public final class ImageUtils {
             BitmapFactory.Options opts = new BitmapFactory.Options();
             opts.inJustDecodeBounds = true;
             BitmapFactory.decodeFile(photoPath, opts);
-            opts.inSampleSize = calculateInSampleSize(opts);
+            opts.inSampleSize = calculateInSampleSize(opts, MAX_SIZE, MAX_SIZE);
             opts.inJustDecodeBounds = false;
             Log.i(TAG, "inSampleSize = " + opts.inSampleSize);
             int angle = ImageUtils.getExifOrientation(photoPath);
@@ -394,7 +480,7 @@ public final class ImageUtils {
      *
      * @param options 解析图片的配置信息
      */
-    public static int calculateInSampleSize(BitmapFactory.Options options) {
+    public static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
         // 保存图片原宽高值
         final int width = options.outWidth;
         final int height = options.outHeight;
@@ -405,14 +491,14 @@ public final class ImageUtils {
 
             // 压缩比例值每次循环两倍增加,
             // 直到原图宽高值的一半除以压缩值后都~大于所需宽高值为止
-            while ((width / inSampleSize) >= MAX_SIZE) {
+            while ((width / inSampleSize) > reqWidth) {
                 inSampleSize *= 2;
                 Log.i(TAG, "with inSampleSize = " + inSampleSize);
             }
         } else {
             // 压缩比例值每次循环两倍增加,
             // 直到原图宽高值的一半除以压缩值后都~大于所需宽高值为止
-            while ((height / inSampleSize) >= MAX_SIZE) {
+            while ((height / inSampleSize) > reqHeight) {
                 inSampleSize *= 2;
                 Log.i(TAG, "height inSampleSize = " + inSampleSize);
             }

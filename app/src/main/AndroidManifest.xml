@@ -5,6 +5,7 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -28,7 +29,8 @@
         <activity android:name=".activity.HttpTestActivity" />
         <activity android:name=".activity.GlideActivity" />
         <activity android:name=".activity.RefreshListActivity" />
-        <activity android:name=".activity.BannerActivity"></activity>
+        <activity android:name=".activity.BannerActivity" />
+        <activity android:name=".activity.ImageCompressActivity"></activity>
     </application>
 
 </manifest>

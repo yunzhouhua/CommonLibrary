@@ -34,6 +34,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Banner"/>
+
+        <Button
+            android:id="@+id/img_compress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text=" Image Compress" />
     </LinearLayout>
 
 </ScrollView>

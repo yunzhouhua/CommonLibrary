@@ -37,6 +37,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         findViewById(R.id.glide).setOnClickListener(this);
         findViewById(R.id.refresh_load_more).setOnClickListener(this);
         findViewById(R.id.banner).setOnClickListener(this);
+        findViewById(R.id.img_compress).setOnClickListener(this);
 
         Log.e("aa", "" + ScreenUtils.getStatusBarHeight(this));
 
@@ -147,6 +148,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.banner:
                 RouteManager.target(this, BannerActivity.class)
+                        .goRightSlide();
+                break;
+            case R.id.img_compress:
+                RouteManager.target(this, ImageCompressActivity.class)
                         .goRightSlide();
                 break;
         }
