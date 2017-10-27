@@ -12,6 +12,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.yunzhou.commonlibrary.R;
 import com.yunzhou.commonlibrary.bean.Son;
+import com.yunzhou.commonlibrary.tab.activity.TabHostActivity;
 import com.yunzhou.libcommon.net.NetStatusUtils;
 import com.yunzhou.libcommon.route.RouteManager;
 import com.yunzhou.libcommon.storage.ACache;
@@ -38,6 +39,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         findViewById(R.id.refresh_load_more).setOnClickListener(this);
         findViewById(R.id.banner).setOnClickListener(this);
         findViewById(R.id.img_compress).setOnClickListener(this);
+        findViewById(R.id.tab_host).setOnClickListener(this);
 
         Log.e("aa", "" + ScreenUtils.getStatusBarHeight(this));
 
@@ -152,6 +154,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.img_compress:
                 RouteManager.target(this, ImageCompressActivity.class)
+                        .goRightSlide();
+                break;
+            case R.id.tab_host:
+                RouteManager.target(this, TabHostActivity.class)
                         .goRightSlide();
                 break;
         }

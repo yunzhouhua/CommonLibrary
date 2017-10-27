@@ -30,7 +30,8 @@
         <activity android:name=".activity.GlideActivity" />
         <activity android:name=".activity.RefreshListActivity" />
         <activity android:name=".activity.BannerActivity" />
-        <activity android:name=".activity.ImageCompressActivity"></activity>
+        <activity android:name=".activity.ImageCompressActivity" />
+        <activity android:name=".tab.activity.TabHostActivity"></activity>
     </application>
 
 </manifest>
