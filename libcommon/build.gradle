@@ -16,11 +16,15 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    lintOptions {
+        disable 'RestrictedApi'
+    }
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'com.android.support:appcompat-v7:25.3.1'
+    implementation 'com.android.support:design:25.3.1'
 
     //  Json 解析
     implementation 'com.alibaba:fastjson:1.1.63.android'
@@ -28,4 +32,6 @@ dependencies {
     implementation "com.squareup.okhttp3:okhttp:3.8.0"
     // Glide
     implementation 'com.github.bumptech.glide:glide:3.7.0'
+    // 角标，可拖拽，首页底部用
+    implementation 'q.rorbin:badgeview:1.1.3'
 }

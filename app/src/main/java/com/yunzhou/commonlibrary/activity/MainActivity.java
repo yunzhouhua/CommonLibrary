@@ -40,6 +40,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         findViewById(R.id.banner).setOnClickListener(this);
         findViewById(R.id.img_compress).setOnClickListener(this);
         findViewById(R.id.tab_host).setOnClickListener(this);
+        findViewById(R.id.tab_home).setOnClickListener(this);
 
         Log.e("aa", "" + ScreenUtils.getStatusBarHeight(this));
 
@@ -158,6 +159,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.tab_host:
                 RouteManager.target(this, TabHostActivity.class)
+                        .goRightSlide();
+                break;
+            case R.id.tab_home:
+                RouteManager.target(this, HomeTabActivity.class)
                         .goRightSlide();
                 break;
         }

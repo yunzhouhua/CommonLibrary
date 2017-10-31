@@ -31,7 +31,8 @@
         <activity android:name=".activity.RefreshListActivity" />
         <activity android:name=".activity.BannerActivity" />
         <activity android:name=".activity.ImageCompressActivity" />
-        <activity android:name=".tab.activity.TabHostActivity"></activity>
+        <activity android:name=".tab.activity.TabHostActivity" />
+        <activity android:name=".activity.HomeTabActivity"></activity>
     </application>
 
 </manifest>
