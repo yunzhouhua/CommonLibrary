@@ -32,7 +32,9 @@
         <activity android:name=".activity.BannerActivity" />
         <activity android:name=".activity.ImageCompressActivity" />
         <activity android:name=".tab.activity.TabHostActivity" />
-        <activity android:name=".activity.HomeTabActivity"></activity>
+        <activity android:name=".activity.HomeTabActivity" />
+        <activity android:name=".activity.PhotoViewActivity" />
+        <activity android:name=".activity.PhotoViewPagerActivity"></activity>
     </application>
 
 </manifest>

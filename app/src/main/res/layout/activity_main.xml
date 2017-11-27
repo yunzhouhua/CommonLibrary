@@ -52,6 +52,19 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Home Tab" />
+
+        <Button
+            android:id="@+id/photoView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="photoview" />
+
+        <Button
+            android:id="@+id/photoview_viewpager"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="PhotoView + ViewPager" />
+
     </LinearLayout>
 
 </ScrollView>
