@@ -16,6 +16,7 @@
 
 package com.yunzhou.libcommon.utils;
 
+import android.content.Context;
 import android.text.TextUtils;
 
 import java.util.Locale;
@@ -109,4 +110,40 @@ public class StringUtils {
         }
         return d;
     }
+
+    /**
+     * 根据资源id获取String字符串
+     * @param context
+     * @param resId
+     * @return
+     */
+    public static String getStringById(Context context, int resId){
+        String result = "";
+        try {
+            result = context.getResources().getString(resId);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    /**
+     * 根据资源id获取String字符串（带占位符参数）
+     * @param context
+     * @param resId
+     * @return
+     */
+    public static String getStringById(Context context, int resId, String... objs){
+        String result = "";
+        try {
+            result = context.getResources().getString(resId, objs);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+
+
+
 }
