@@ -1,9 +1,12 @@
 package com.yunzhou.libcommon.views;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.yunzhou.libcommon.R;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,10 +17,15 @@ import java.util.List;
  */
 public class FlowLayout extends ViewGroup {
 
-    public FlowLayout(Context context, AttributeSet attrs, int defStyle)
+    private final int DEFAULT_MARGIN_HORIZONTAL = 0;
+    private final int DEFAULT_MARGIN_VERTICAL = 0;
+
+    private int mMarginHorizontal = 0;
+    private int mMarginVertical = 0;
+
+    public FlowLayout(Context context)
     {
-        super(context, attrs, defStyle);
-        //
+        this(context, null);
     }
 
     public FlowLayout(Context context, AttributeSet attrs)
@@ -25,9 +33,19 @@ public class FlowLayout extends ViewGroup {
         this(context, attrs, 0);
     }
 
-    public FlowLayout(Context context)
+    public FlowLayout(Context context, AttributeSet attrs, int defStyle)
     {
-        this(context, null);
+        super(context, attrs, defStyle);
+        //
+        init(context, attrs);
+    }
+
+    private void init(Context context, AttributeSet attrs) {
+        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.FlowLayout);
+        mMarginHorizontal = typedArray.getDimensionPixelOffset(R.styleable.FlowLayout_itemMarginHorizontal, DEFAULT_MARGIN_HORIZONTAL);
+        mMarginVertical = typedArray.getDimensionPixelOffset(R.styleable.FlowLayout_itemMarginVertical, DEFAULT_MARGIN_VERTICAL);
+        typedArray.recycle();
+        typedArray = null;
     }
 
     @Override
@@ -65,21 +83,31 @@ public class FlowLayout extends ViewGroup {
             int childHeight = child.getMeasuredHeight() + lp.topMargin
                     + lp.bottomMargin;
 
+            int delta = lineWidth == 0 ? 0 : mMarginHorizontal;
+
             // 换行
-            if (lineWidth + childWidth > sizeWidth - getPaddingLeft() - getPaddingRight())
+            if (lineWidth + childWidth + delta > sizeWidth - getPaddingLeft() - getPaddingRight())
             {
                 // 对比得到最大的宽度
                 width = Math.max(width, lineWidth);
                 // 重置lineWidth
                 lineWidth = childWidth;
                 // 记录行高
-                height += lineHeight;
+                if(height == 0){
+                    height += lineHeight;
+                }else {
+                    height += (lineHeight + mMarginVertical);
+                }
                 lineHeight = childHeight;
             } else
             // 未换行
             {
                 // 叠加行宽
-                lineWidth += childWidth;
+                if(lineWidth == 0) {
+                    lineWidth += childWidth;
+                }else{
+                    lineWidth += ( childWidth + mMarginHorizontal );
+                }
                 // 得到当前行最大的高度
                 lineHeight = Math.max(lineHeight, childHeight);
             }
@@ -87,7 +115,11 @@ public class FlowLayout extends ViewGroup {
             if (i == cCount - 1)
             {
                 width = Math.max(lineWidth, width);
-                height += lineHeight;
+                if(height == 0) {
+                    height += lineHeight;
+                }else{
+                    height += (lineHeight + mMarginVertical);
+                }
             }
         }
 
@@ -136,8 +168,10 @@ public class FlowLayout extends ViewGroup {
             int childWidth = child.getMeasuredWidth();
             int childHeight = child.getMeasuredHeight();
 
+            int delta = lineWidth == 0 ? 0 : mMarginHorizontal;
+
             // 如果需要换行
-            if (childWidth + lineWidth + lp.leftMargin + lp.rightMargin > width - getPaddingLeft() - getPaddingRight())
+            if (childWidth + delta + lineWidth + lp.leftMargin + lp.rightMargin > width - getPaddingLeft() - getPaddingRight())
             {
                 // 记录LineHeight
                 mLineHeight.add(lineHeight);
@@ -146,7 +180,9 @@ public class FlowLayout extends ViewGroup {
 
                 // 重置我们的行宽和行高
                 lineWidth = 0;
+
                 lineHeight = childHeight + lp.topMargin + lp.bottomMargin;
+
                 // 重置我们的View集合
                 lineViews = new ArrayList<View>();
             }
@@ -195,10 +231,10 @@ public class FlowLayout extends ViewGroup {
                 child.layout(lc, tc, rc, bc);
 
                 left += child.getMeasuredWidth() + lp.leftMargin
-                        + lp.rightMargin;
+                        + lp.rightMargin + mMarginHorizontal;
             }
             left = getPaddingLeft() ;
-            top += lineHeight ;
+            top += lineHeight + mMarginVertical;
         }
 
     }

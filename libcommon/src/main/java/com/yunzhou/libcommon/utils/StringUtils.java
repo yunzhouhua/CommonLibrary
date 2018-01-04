@@ -131,12 +131,13 @@ public class StringUtils {
      * 根据资源id获取String字符串（带占位符参数）
      * @param context
      * @param resId
+     * @param arguments
      * @return
      */
-    public static String getStringById(Context context, int resId, String... objs){
+    public static String getStringById(Context context, int resId, String... arguments){
         String result = "";
         try {
-            result = context.getResources().getString(resId, objs);
+            result = context.getResources().getString(resId, arguments);
         }catch (Exception e){
             e.printStackTrace();
         }
