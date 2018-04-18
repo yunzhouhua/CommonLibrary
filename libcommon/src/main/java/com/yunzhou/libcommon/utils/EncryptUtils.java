@@ -10,15 +10,15 @@ import java.security.NoSuchAlgorithmException;
  * 加密工具类
  * Created by huayunzhou on 2017/9/23.
  */
-
+@SuppressWarnings("unused")
 public class EncryptUtils {
 
 
     //****************************  md5  ******************************
     /**
      * 32位 md5加密
-     * @param data
-     * @return
+     * @param data  原始数据
+     * @return  加密后的数据
      */
     public final static String md5Encode(String data) {
         if (data == null) {

@@ -12,6 +12,7 @@ import java.util.Locale;
  * Created by huayunzhou on 2017/9/22.
  */
 
+@SuppressWarnings("unused")
 public class DateFormatUtils {
 
     /**
@@ -137,6 +138,9 @@ public class DateFormatUtils {
      * @return  时间
      */
     public static String format(Date date, String fmtTemplate, Locale locale){
+        if(date == null){
+            return StringUtils.EMPTY;
+        }
         SimpleDateFormat sdf = getSdf(locale);
         sdf.applyPattern(fmtTemplate);
         return sdf.format(date);

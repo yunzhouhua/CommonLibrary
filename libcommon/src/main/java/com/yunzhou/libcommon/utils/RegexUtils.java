@@ -5,21 +5,24 @@ import android.text.TextUtils;
 import java.util.regex.Pattern;
 
 /**
+ * 正则工具类
  * Created by huayunzhou on 2017/9/23.
  */
-
+@SuppressWarnings("unused")
 public class RegexUtils {
 
-    //e-mail 正则表达式
+    // e-mail 正则表达式
     public final static String REG_EMAIL = "\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*";
-    //手机号 正则表达式
+    // 手机号 正则表达式
     public final static String REG_PHONE = "^1\\d{10}$";
-    //IP 正则表达式
+    // IP 正则表达式
     public final static String REG_IP = "((?:(?:25[0-5]|2[0-4]\\d|((1\\d{2})|([1-9]?\\d)))\\.){3}(?:25[0-5]|2[0-4]\\d|((1\\d{2})|([1-9]?\\d))))";
-    //网络路径 正则表达式
+    // 网络路径 正则表达式
     public final static String REG_URL = "^((https|http|ftp|rtsp|mms)?:\\/\\/)[[^\\s]| ]+";
-    //用户合法输入 正则表达式（中文/英文。数字）
+    // 用户合法输入 正则表达式（中文/英文。数字）
     public final static  String REG_VALID_INPUT = "([\u4e00-\u9fa5A-Za-z0-9])+";
+    // 二代身份证账号
+    public final static String REG_ID_NUM = "^[1-9]\\d{5}(18|19|([23]\\d))\\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\\d{3}[0-9Xx]$";
 
     /**
      * 正则匹配
@@ -81,5 +84,14 @@ public class RegexUtils {
      */
     public static boolean isValidInput(String input){
         return match(input, REG_VALID_INPUT);
+    }
+
+    /**
+     * 是否满足二代身份证格式
+     * @param idNumber  身份证号码
+     * @return true:匹配；false:不匹配
+     */
+    public static boolean isIdNumValid(String idNumber){
+        return match(idNumber, REG_ID_NUM);
     }
 }

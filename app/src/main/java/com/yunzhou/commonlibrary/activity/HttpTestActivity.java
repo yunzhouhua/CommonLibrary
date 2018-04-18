@@ -7,13 +7,17 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
+import com.alibaba.fastjson.JSONObject;
 import com.yunzhou.commonlibrary.R;
 import com.yunzhou.commonlibrary.bean.ResponseTemplate;
 import com.yunzhou.libcommon.net.http.Http;
 import com.yunzhou.libcommon.net.http.HttpError;
+import com.yunzhou.libcommon.net.http.MediaType;
 import com.yunzhou.libcommon.net.http.callback.FileCallBack;
 import com.yunzhou.libcommon.net.http.callback.JsonCallBack;
 import com.yunzhou.libcommon.net.http.callback.StringCallBack;
+
+import org.json.JSONException;
 
 import java.io.File;
 
@@ -99,15 +103,36 @@ public class HttpTestActivity extends AppCompatActivity implements View.OnClickL
     }
 
     public void post() {
+//        Http.post()
+//                .url("https://accountv3-api.fclassroom.cn/checkVersion.json")
+//                .addHeader("Charset", "UTF-8")
+//                .addHeader("Accept-Encoding", "gzip,deflate")
+//                .addHeader("Accept-Language", "zh-cn")
+//                .addParam("jike-client-from", "APP")
+//                .addParam("versionType", "21")
+//                .addParam("category", "20")
+//                .addParam("versionNo", "355")
+//                .execute(new JsonCallBack<ResponseTemplate<Object>>() {
+//                    @Override
+//                    protected void onFailed(@NonNull HttpError error) {
+//                        Log.e(TAG, "Failed : " + error.getCode() + " : " + error.getMessage());
+//                    }
+//
+//                    @Override
+//                    protected void onSuccess(long id, ResponseTemplate<Object> result) {
+//                        Log.e(TAG, "result : " + result );
+//                    }
+//                });
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("name", "dfadfasd");
+        jsonObject.put("age", "12");
         Http.post()
-                .url("https://accountv3-api.fclassroom.cn/checkVersion.json")
+                .url("http://localhost:8080/queryItems")
                 .addHeader("Charset", "UTF-8")
                 .addHeader("Accept-Encoding", "gzip,deflate")
                 .addHeader("Accept-Language", "zh-cn")
-                .addParam("jike-client-from", "APP")
-                .addParam("versionType", "21")
-                .addParam("category", "20")
-                .addParam("versionNo", "355")
+                .stream(MediaType.JSON, jsonObject.toJSONString())
                 .execute(new JsonCallBack<ResponseTemplate<Object>>() {
                     @Override
                     protected void onFailed(@NonNull HttpError error) {

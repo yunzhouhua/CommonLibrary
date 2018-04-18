@@ -113,11 +113,14 @@ public class StringUtils {
 
     /**
      * 根据资源id获取String字符串
-     * @param context
-     * @param resId
-     * @return
+     * @param context   context
+     * @param resId     字符串资源Id
+     * @return  加载的字符串
      */
     public static String getStringById(Context context, int resId){
+        if(context == null){
+            return StringUtils.EMPTY;
+        }
         String result = "";
         try {
             result = context.getResources().getString(resId);
@@ -129,12 +132,15 @@ public class StringUtils {
 
     /**
      * 根据资源id获取String字符串（带占位符参数）
-     * @param context
-     * @param resId
-     * @param arguments
-     * @return
+     * @param context       context
+     * @param resId         资源id
+     * @param arguments     参数
+     * @return  加载的字符串
      */
     public static String getStringById(Context context, int resId, String... arguments){
+        if(context == null){
+            return StringUtils.EMPTY;
+        }
         String result = "";
         try {
             result = context.getResources().getString(resId, arguments);
@@ -143,8 +149,4 @@ public class StringUtils {
         }
         return result;
     }
-
-
-
-
 }
