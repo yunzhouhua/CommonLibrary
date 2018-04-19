@@ -71,6 +71,12 @@
             android:layout_height="wrap_content"
             android:text="FlowLayout" />
 
+        <Button
+            android:id="@+id/btn_toast"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Toast" />
+
     </LinearLayout>
 
 </ScrollView>

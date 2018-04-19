@@ -35,7 +35,8 @@
         <activity android:name=".activity.HomeTabActivity" />
         <activity android:name=".activity.PhotoViewActivity" />
         <activity android:name=".activity.PhotoViewPagerActivity" />
-        <activity android:name=".activity.FlowLayoutActivity"></activity>
+        <activity android:name=".activity.FlowLayoutActivity" />
+        <activity android:name=".activity.ToastActivity" />
     </application>
 
 </manifest>
