@@ -19,7 +19,13 @@ public class ToastActivity extends AppCompatActivity {
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.btn_normal:
-                ToastUtils.show(this, null, Gravity.CENTER);
+                ToastUtils.show(this, "普通Toast");
+                break;
+            case R.id.btn_gravity:
+                ToastUtils.show(this, "方向控制的Toast", Gravity.CENTER);
+                break;
+            case R.id.btn_anim:
+                ToastUtils.showAnim(this, "带动画的Toast", -1);
                 break;
         }
     }
