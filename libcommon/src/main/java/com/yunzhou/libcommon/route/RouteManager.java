@@ -50,7 +50,7 @@ public class RouteManager {
 
     public RouteManager target(Context context, String scheme, String host, String path){
         if(TextUtils.isEmpty(scheme) || TextUtils.isEmpty(host) || TextUtils.isEmpty(path)){
-            throw new IllegalArgumentException("Scheme route erroe; sechme/host/path can't be null!");
+            throw new IllegalArgumentException("Scheme route error; sechme/host/path can't be null!");
         }
         StringBuilder uriBuilder = new StringBuilder(scheme);
         uriBuilder.append("://").append(host).append(path);

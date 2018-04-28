@@ -21,8 +21,8 @@ public class RegexUtils {
     public final static String REG_URL = "^((https|http|ftp|rtsp|mms)?:\\/\\/)[[^\\s]| ]+";
     // 用户合法输入 正则表达式（中文/英文。数字）
     public final static  String REG_VALID_INPUT = "([\u4e00-\u9fa5A-Za-z0-9])+";
-    // 二代身份证账号
-    public final static String REG_ID_NUM = "^[1-9]\\d{5}(18|19|([23]\\d))\\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\\d{3}[0-9Xx]$";
+//    // 二代身份证账号
+//    public final static String REG_ID_NUM = "^[1-9]\\d{5}(18|19|([23]\\d))\\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\\d{3}[0-9Xx]$";
 
     /**
      * 正则匹配
@@ -92,6 +92,10 @@ public class RegexUtils {
      * @return true:匹配；false:不匹配
      */
     public static boolean isIdNumValid(String idNumber){
-        return match(idNumber, REG_ID_NUM);
+        IdCardValidator validator = new IdCardValidator();
+        if(TextUtils.isEmpty(idNumber)){
+            return false;
+        }
+        return validator.isValidatedAllIdcard(idNumber);
     }
 }
