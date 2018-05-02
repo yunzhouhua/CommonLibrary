@@ -48,7 +48,7 @@ public class RouteManager {
         return new RouteManager(context, route);
     }
 
-    public RouteManager target(Context context, String scheme, String host, String path){
+    public static RouteManager target(Context context, String scheme, String host, String path){
         if(TextUtils.isEmpty(scheme) || TextUtils.isEmpty(host) || TextUtils.isEmpty(path)){
             throw new IllegalArgumentException("Scheme route error; sechme/host/path can't be null!");
         }
