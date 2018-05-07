@@ -288,7 +288,53 @@ Http.post()
 
 ##### SSL管理
 
-## 待完善
+###### 单向认证
+
+```java
+// 假设证书存放于res/raw目录下
+InputStream ca = getResources().openRawResource(R.raw.ca);
+SSLParams sslParams = new SSLParams(new InputStream[]{ca}, null, null);
+
+HttpConfig config = HttpConfig.getDefaultConfig();
+config.setSslParams(sslParams);
+
+Http.init(this, new OKHttpExecutor(), config);
+```
+
+###### 双向认证
+
+```java
+InputStream ca = getResources().openRawResource(R.raw.ca);
+InputStream bks = getResources().openRawResource(R.raw.bks);
+String password = "123456";
+SSLParams sslParams = new SSLParams(new InputStream[]{ca}, bks, password);
+
+HttpConfig config = HttpConfig.getDefaultConfig();
+config.setSslParams(sslParams);
+
+Http.init(this, new OKHttpExecutor(), config);
+```
+
+###### 全局设置
+
+全局设置同上述单向认证/双向认证是一致的
+
+###### 局部设置
+
+局部设置是的他对当前单个请求有效
+
+```java
+// 假定这边使用的是双向认证
+InputStream ca = getResources().openRawResource(R.raw.ca);
+InputStream bks = getResources().openRawResource(R.raw.bks);
+String password = "123456";
+SSLParams sslParams = new SSLParams(new InputStream[]{ca}, bks, password);
+
+Http.post()
+    .url("")
+    .ssl(sslParams)
+    .execute(null);
+```
 
 
 
@@ -467,6 +513,9 @@ SharedPreferenceUtils.clean(context, true);
 
 
 
+
+
 ## 六.常用View组件
 
 参考com.yunzhou.libcommon.views中的代码
+
