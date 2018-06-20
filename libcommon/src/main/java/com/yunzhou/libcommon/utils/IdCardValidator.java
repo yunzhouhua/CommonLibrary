@@ -113,6 +113,12 @@ public class IdCardValidator {
             return false;
         }
 
+        String birthday = idcard.substring(6, 14);
+        // 判断生日是否合法
+        if(!isValidBirthday(birthday)){
+            return false;
+        }
+
         if (null != c) {
             int bit[] = new int[idcard17.length()];
 
@@ -131,6 +137,70 @@ public class IdCardValidator {
             if (!idcard18Code.equalsIgnoreCase(checkCode)) {
                 return false;
             }
+        }
+        return true;
+    }
+
+    /**
+     * 判断生日是否合法
+     * @param birthday  生日
+     * @return  true:生日合法;false:生日不合法
+     */
+    private boolean isValidBirthday(String birthday){
+
+        int year = Integer.parseInt(birthday.substring(0, 4));
+        int month = Integer.parseInt(birthday.substring(4, 6));
+        int day = Integer.parseInt(birthday.substring(6, 8));
+
+        // 判断是否为合法的年份
+        GregorianCalendar curDay = new GregorianCalendar();
+        int curYear = curDay.get(Calendar.YEAR);
+
+        // 判断年
+        if(((curYear - year) > 150) && year > curYear){
+            return false;
+        }
+
+        // 判断月
+        if (month < 1 || month > 12) {
+            return false;
+        }
+
+        //判断日
+        boolean mflag = false;
+        try {
+            Date date = new SimpleDateFormat("yyyyMMdd").parse(birthday);
+            curDay.setTime(date); // 将该身份证的出生日期赋于对象curDay
+            switch (month) {
+                case 1:
+                case 3:
+                case 5:
+                case 7:
+                case 8:
+                case 10:
+                case 12:
+                    mflag = (day >= 1 && day <= 31);
+                    break;
+                case 2: // 公历的2月非闰年有28天,闰年的2月是29天。
+                    if (curDay.isLeapYear(curDay.get(Calendar.YEAR))) {
+                        mflag = (day >= 1 && day <= 29);
+                    } else {
+                        mflag = (day >= 1 && day <= 28);
+                    }
+                    break;
+                case 4:
+                case 6:
+                case 9:
+                case 11:
+                    mflag = (day >= 1 && day <= 30);
+                    break;
+            }
+            if (!mflag) {
+                return false;
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return false;
         }
         return true;
     }
