@@ -2,6 +2,8 @@ package com.yunzhou.libcommon.net.http.excutor;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.util.Log;
+
 import com.yunzhou.libcommon.net.http.Http;
 import com.yunzhou.libcommon.net.http.HttpError;
 import com.yunzhou.libcommon.net.http.callback.Callback;
@@ -74,11 +76,19 @@ public class OKHttpExecutor extends Executor {
         call.enqueue(new okhttp3.Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
+                if(callback == null){
+                    Log.d(NetLog.TAG, "onFailure: don't care the net work result.");
+                    return;
+                }
                 sendFailCallback(request, call, e, callback, null);
             }
 
             @Override
             public void onResponse(Call call, okhttp3.Response okHttpResponse) throws IOException {
+                if(callback == null){
+                    Log.d(NetLog.TAG, "onResponse: don't care the net work result.");
+                    return;
+                }
                 if(call.isCanceled()){
                     sendFailCallback(request, call,
                             new IOException("Call is canceled!"), callback, okHttpResponse);

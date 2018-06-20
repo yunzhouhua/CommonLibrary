@@ -11,7 +11,7 @@ import com.yunzhou.libcommon.net.http.request.Request;
  */
 
 public class NetLog {
-    private static final String TAG = "HTTP";
+    public static final String TAG = "HTTP";
 
     public static void start(Request request){
         Log.d(TAG, "======================================== START ========================================");
