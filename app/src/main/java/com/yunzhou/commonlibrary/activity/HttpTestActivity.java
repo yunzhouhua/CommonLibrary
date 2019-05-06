@@ -1,8 +1,8 @@
 package com.yunzhou.commonlibrary.activity;
 
+import android.graphics.Color;
 import android.os.Environment;
 import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -10,6 +10,8 @@ import android.view.View;
 import com.alibaba.fastjson.JSONObject;
 import com.yunzhou.commonlibrary.R;
 import com.yunzhou.commonlibrary.bean.ResponseTemplate;
+import com.yunzhou.libcommon.app.activity.InjectionActivity;
+import com.yunzhou.libcommon.app.annotation.ActivityInjection;
 import com.yunzhou.libcommon.net.http.Http;
 import com.yunzhou.libcommon.net.http.HttpError;
 import com.yunzhou.libcommon.net.http.MediaType;
@@ -17,27 +19,34 @@ import com.yunzhou.libcommon.net.http.callback.FileCallBack;
 import com.yunzhou.libcommon.net.http.callback.JsonCallBack;
 import com.yunzhou.libcommon.net.http.callback.StringCallBack;
 
-import org.json.JSONException;
 
 import java.io.File;
 
-
-public class HttpTestActivity extends AppCompatActivity implements View.OnClickListener{
+@ActivityInjection(
+        useTemplate = true,
+        contentViewId = R.layout.activity_http_test,
+        title = "HttpTestActivity",
+        bgDrawableResId = R.drawable.bg_blue,
+        backIconColorId = R.color.colorAccent)
+public class HttpTestActivity extends InjectionActivity implements View.OnClickListener{
 
     private static final String TAG = "HttpTestActivity";
     private static final String HOST = "http://192.168.2.109:8080/webapp/";
 
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_http_test);
+    protected void setListener() {
+        super.setListener();
         findViewById(R.id.get).setOnClickListener(this);
         findViewById(R.id.post).setOnClickListener(this);
         findViewById(R.id.upload).setOnClickListener(this);
         findViewById(R.id.download).setOnClickListener(this);
         findViewById(R.id.login).setOnClickListener(this);
         findViewById(R.id.logout).setOnClickListener(this);
+    }
 
+    @Override
+    protected void processLogic(Bundle savedInstanceState) {
         Http.init(this);
     }
 

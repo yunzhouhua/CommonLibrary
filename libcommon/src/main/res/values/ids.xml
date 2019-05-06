@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item type="id" name="cmn_title_group" />
+    <item type="id" name="cmn_title" />
+    <item type="id" name="cmn_title_ic_back" />
+    <item type="id" name="cmn_content" />
+    <item type="id" name="cmn_navigation_group" />
+</resources>
